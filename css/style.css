@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap');
+
+body { 
+    font-family: 'Sarabun', sans-serif; 
+    background-color: #f0f2f5;
+}
+
+.center-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.form-check-input {
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+}
+
+.form-check-input:disabled {
+    opacity: 0.8;
+    background-color: #eee;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.table-success {
+    --bs-table-bg: #d1e7dd;
+}
