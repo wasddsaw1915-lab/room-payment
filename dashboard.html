@@ -11,6 +11,7 @@
         .table-success-custom { background-color: #d1e7dd !important; }
         .form-check-input { width: 1.6em; height: 1.6em; cursor: pointer; }
         .card { border-radius: 15px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .btn-primary { background: linear-gradient(135deg, #0d6efd 0%, #0042a5 100%) !important; border: none !important; border-radius: 12px !important; }
     </style>
 </head>
 <body>
@@ -53,6 +54,9 @@
 
             <div id="adminArea">
                 <button onclick="exportCSV()" class="btn btn-success w-100 mb-2 py-3 fw-bold shadow-sm">📥 Export Excel + สรุปยอด</button>
+                
+                <button onclick="selectAll()" class="btn btn-primary w-100 mb-2 py-2 fw-bold shadow-sm">✅ ติ๊กจ่ายทั้งหมด</button>
+                
                 <button onclick="resetData()" class="btn btn-outline-danger w-100 py-2">🔄 ล้างข้อมูลทั้งหมด</button>
             </div>
 
@@ -70,7 +74,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // ✅ ใส่ Config ของคุณเรียบร้อยแล้ว
+    // Firebase Config เดิมของคุณ
     const firebaseConfig = {
         apiKey: "AIzaSyA4wxFVdj6UDtxAIfG5jTUrKBM2AboT7wQ",
         authDomain: "myroompayment.firebaseapp.com",
@@ -95,18 +99,23 @@
         renderTable();
     });
 
-    // ส่งข้อมูลเมื่อมีการติ๊ก
+    // ฟังก์ชันติ๊กจ่ายเงินรายคน
     window.togglePaid = async function(i) {
         if (userRole === 'guest') return;
         paid[i] = !paid[i];
-        try {
+        await set(paidRef, paid);
+    }
+
+    // ฟังก์ชันติ๊กจ่ายเงินทั้งหมด (เพิ่มใหม่)
+    window.selectAll = async function() {
+        if (userRole === 'guest') return;
+        if (confirm("ยืนยันว่าจะติ๊กจ่ายเงินให้ทุกคนหรือไม่?")) {
+            members.forEach((_, i) => { paid[i] = true; });
             await set(paidRef, paid);
-        } catch (e) {
-            console.error("Error saving:", e);
         }
     }
 
-    // ล้างข้อมูล
+    // ฟังก์ชันล้างข้อมูล
     window.resetData = async function() {
         if (userRole === 'guest') return;
         if (confirm("ล้างข้อมูลการจ่ายเงินทั้งหมดเพื่อเริ่มสัปดาห์ใหม่?")) {
@@ -143,13 +152,11 @@
         if (userRole === 'guest') {
             document.getElementById('adminArea').classList.add('d-none');
             document.getElementById('guestArea').classList.remove('d-none');
-            document.getElementById('navTitle').innerText = "💰 ตรวจสอบการจ่ายเงินห้อง";
         }
     }
 
     setInterval(() => {
-        const now = new Date();
-        document.getElementById('date').innerText = now.toLocaleString('th-TH');
+        document.getElementById('date').innerText = new Date().toLocaleString('th-TH');
     }, 1000);
 
     window.filterNames = function() {
@@ -169,17 +176,12 @@
             if (paid[i]) count++; 
             rows.push(`${i + 1},${n},${isPaid}`);
         });
-        rows.push('');
-        rows.push(`,จำนวนคนจ่ายทั้งหมด,${count} คน`);
-        rows.push(`,ยอดเงินรวมทั้งสิ้น,${count * PRICE} บาท`);
         let blob = new Blob(['\uFEFF' + rows.join('\n')], { type: 'text/csv;charset=utf-8' });
         let a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = `สรุปยอดเงินห้อง_${new Date().toLocaleDateString('th-TH')}.csv`;
         a.click();
     }
-<link rel="stylesheet" href="css/style.css">
 </script>
 </body>
-
 </html>
