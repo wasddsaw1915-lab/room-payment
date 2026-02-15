@@ -9,114 +9,20 @@
     <link rel="icon" type="image/png" href="LOGO.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap');
-        
-        :root {
-            --bg-body: #f8f9fa;
-            --bg-card: #ffffff;
-            --text-main: #2d3436;
-            --school-yellow: #ffcc00;
-            --school-grey: #4a4a4a;
-        }
-
-        [data-theme="dark"] {
-            --bg-body: #121212;
-            --bg-card: #1e1e1e;
-            --text-main: #f5f6fa;
-            --school-yellow: #f1c40f;
-        }
-
-        body { 
-            font-family: 'Sarabun', sans-serif; 
-            background-color: var(--bg-body); 
-            color: var(--text-main); 
-            transition: all 0.3s ease;
-            padding-bottom: 100px;
-        }
-
-        /* Navbar */
+        :root { --bg-body: #f8f9fa; --bg-card: #ffffff; --text-main: #2d3436; --school-yellow: #ffcc00; --school-grey: #4a4a4a; }
+        [data-theme="dark"] { --bg-body: #121212; --bg-card: #1e1e1e; --text-main: #f5f6fa; --school-yellow: #f1c40f; }
+        body { font-family: 'Sarabun', sans-serif; background-color: var(--bg-body); color: var(--text-main); transition: all 0.3s ease; padding-bottom: 100px; }
         .navbar { background-color: var(--school-grey) !important; border-bottom: 3px solid var(--school-yellow); }
-        .navbar-brand { transition: 0.2s; }
-        .navbar-brand:hover { transform: scale(1.02); }
-        
-        /* New Layout: Summary Card */
-        .summary-section {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 25px;
-            margin-top: -25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Sticky Search */
-        .search-container {
-            position: sticky;
-            top: 60px;
-            z-index: 9;
-            background: var(--bg-body);
-            padding: 15px 0;
-        }
-        .search-input {
-            border-radius: 15px;
-            padding: 12px 20px;
-            border: 2px solid transparent;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: 0.3s;
-        }
-        .search-input:focus { border-color: var(--school-yellow); outline: none; box-shadow: 0 4px 20px rgba(255, 204, 0, 0.2); }
-
-        /* List Table */
-        .member-list-card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.03);
-        }
+        .summary-section { background: var(--bg-card); border-radius: 20px; padding: 25px; margin-top: -25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: relative; z-index: 10; }
+        .search-container { position: sticky; top: 60px; z-index: 9; background: var(--bg-body); padding: 15px 0; }
+        .search-input { border-radius: 15px; padding: 12px 20px; border: 2px solid transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .member-list-card { background: var(--bg-card); border-radius: 20px; overflow: hidden; box-shadow: 0 2px 15px rgba(0,0,0,0.03); }
         .table tr { border-bottom: 1px solid rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer; }
         .table td { padding: 18px 12px; vertical-align: middle; }
         .paid-row { background-color: rgba(255, 204, 0, 0.1) !important; }
-        .paid-row .fw-bold { color: #b8860b; }
-        
-        /* Modern Checkbox */
-        .form-check-input {
-            width: 2.3em !important; height: 2.3em !important;
-            border: 2px solid #ddd;
-            border-radius: 10px !important;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .form-check-input:checked { background-color: var(--school-yellow) !important; border-color: var(--school-yellow) !important; }
-
-        /* Floating Admin Bar */
-        .admin-actions {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 450px;
-            background: var(--bg-card);
-            padding: 12px;
-            border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-            display: flex;
-            gap: 10px;
-            z-index: 1000;
-        }
-        .btn-action { border-radius: 15px; font-weight: 600; padding: 10px; }
-        
-        .stat-bubble {
-            background: var(--school-yellow);
-            color: #333;
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        #totalAmount { transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .bump { transform: scale(1.15); color: #2ecc71 !important; }
+        .form-check-input { width: 2.3em !important; height: 2.3em !important; border: 2px solid #ddd; border-radius: 10px !important; }
+        .admin-actions { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: var(--bg-card); padding: 12px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.25); display: flex; gap: 10px; z-index: 1000; }
+        .stat-bubble { background: var(--school-yellow); color: #333; padding: 6px 16px; border-radius: 50px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -124,10 +30,13 @@
 <nav class="navbar navbar-dark sticky-top shadow-sm">
     <div class="container d-flex justify-content-between">
         <a class="navbar-brand fw-bold d-flex align-items-center" href="https://www.bwit.ac.th" target="_blank">
-            <img src="LOGO.png" width="32" height="32" class="me-2" alt="Logo">
-            <span style="font-size: 0.95rem;">บึงสามพันวิทยาคม</span>
+            <img src="LOGO.png" width="30" height="30" class="me-2" alt="Logo">
+            <span style="font-size: 0.9rem;">บึงสามพันวิทยาคม</span>
         </a>
-        <button class="btn btn-sm btn-outline-light rounded-pill px-3" onclick="toggleTheme()" id="themeBtn">🌙 โหมดมืด</button>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-light rounded-pill px-2" onclick="toggleTheme()" id="themeBtn">🌙</button>
+            <button class="btn btn-sm btn-danger rounded-pill px-3" onclick="logout()">🚪 ออกจากระบบ</button>
+        </div>
     </div>
 </nav>
 
@@ -143,11 +52,9 @@
             </div>
         </div>
     </div>
-
-    <div class="search-container animate__animated animate__fadeIn">
+    <div class="search-container">
         <input type="text" id="searchBox" class="form-control search-input" placeholder="🔍 ค้นหาชื่อ หรือ เลขที่..." onkeyup="filterNames()">
     </div>
-
     <div class="member-list-card animate__animated animate__fadeInUp">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
@@ -160,17 +67,14 @@
 <div id="adminArea" class="admin-actions animate__animated animate__slideInUp">
     <button onclick="selectAll()" class="btn btn-warning btn-action flex-grow-1">✅ จ่ายทั้งหมด</button>
     <button onclick="exportCSV()" class="btn btn-secondary btn-action">📥 รายงาน</button>
-    <button onclick="resetData()" class="btn btn-outline-danger btn-action">🔄 ล้าง</button>
-    <button onclick="logout()" class="btn btn-light btn-action">🚪</button>
+    <button onclick="resetData()" class="btn btn-outline-danger btn-action">🔄 ล้างข้อมูล</button>
 </div>
 
-<div id="guestArea" class="alert alert-secondary d-none text-center fixed-bottom m-3 rounded-pill shadow">
-    👀 โหมดสมาชิก (ดูได้อย่างเดียว)
-</div>
+<div id="guestArea" class="alert alert-secondary d-none text-center fixed-bottom m-3 rounded-pill shadow">👀 โหมดสมาชิก (ดูได้อย่างเดียว)</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyA4wxFVdj6UDtxAIfG5jTUrKBM2AboT7wQ",
@@ -185,25 +89,45 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const paidRef = ref(db, 'paid_status');
+    const resetRef = ref(db, 'last_reset_week');
 
-    // เลขที่ 2 แก้เป็น "เก๋า"
     const members = ["แอมป์","เก๋า","ท่านคิว","ท่านรอง","ไอที","เต้","ปลื้ม","อ๋อง","เพชร","ชาย","กิตาร์","ตั้งเม","เก้า","ฟอร์ด","ข้าวโอ๊ต","โฟกัส","วิน","นานา","แซน","จิ๊จ๋า","เมม","ปลอย","โบว์","ส้มโอ","พิชช่า","ข้าวหอม","น้ำ","มะยม","ใบตอง","ต้นหอม"];
     const PRICE = 5;
     const userRole = localStorage.getItem('role') || 'guest';
     let paid = {};
 
-    // ฟังก์ชันเสียง "ติ๊ก" (Mechanical Tick)
+    // ระบบ Auto Reset วันอาทิตย์
+    async function checkAutoReset() {
+        const now = new Date();
+        const day = now.getDay(); // 0 = วันอาทิตย์
+        
+        // คำนวณเลขสัปดาห์ปัจจุบัน (เพื่อให้รู้ว่าเป็นอาทิตย์ของสัปดาห์ไหน)
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        const weekNumber = Math.ceil((((now - startOfYear) / 86400000) + startOfYear.getDay() + 1) / 7);
+        const currentResetKey = `${now.getFullYear()}-${weekNumber}`;
+
+        if (day === 0) { // ถ้าเป็นวันอาทิตย์
+            const snapshot = await get(resetRef);
+            const lastReset = snapshot.val();
+
+            if (lastReset !== currentResetKey) {
+                // ยังไม่ได้ล้างสัปดาห์นี้ -> ทำการล้าง
+                await set(paidRef, {});
+                await set(resetRef, currentResetKey);
+                console.log("Auto Reset Completed for Sunday!");
+            }
+        }
+    }
+
     function playSuccessSound() {
         try {
             const context = new (window.AudioContext || window.webkitAudioContext)();
             const osc = context.createOscillator();
             const gain = context.createGain();
             osc.connect(gain); gain.connect(context.destination);
-            osc.type = 'triangle'; // เสียงแบบติ๊กๆ นุ่มๆ
+            osc.type = 'triangle';
             osc.frequency.setValueAtTime(1200, context.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(40, context.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.15, context.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, context.currentTime);
             osc.start(); osc.stop(context.currentTime + 0.1);
         } catch (e) {}
     }
@@ -211,18 +135,13 @@
     onValue(paidRef, (snapshot) => {
         paid = snapshot.val() || {};
         renderTable();
+        checkAutoReset(); // ตรวจสอบ Auto Reset ทุกครั้งที่เปิดแอป
     });
 
     window.togglePaid = async function(i) {
         if (userRole === 'guest') return;
-        if (!paid[i]) playSuccessSound(); // เสียงตอนติ๊กถูก
-
+        if (!paid[i]) playSuccessSound();
         paid[i] = !paid[i];
-        
-        const el = document.getElementById('totalAmount');
-        el.classList.add('bump');
-        setTimeout(() => el.classList.remove('bump'), 300);
-
         await set(paidRef, paid);
     }
 
@@ -233,20 +152,9 @@
             const isChecked = paid[i] ? 'checked' : '';
             const rowClass = paid[i] ? 'paid-row' : '';
             const row = document.createElement('tr');
-            row.className = `${rowClass} animate__animated animate__fadeIn`;
-            row.style.animationDelay = `${i * 0.02}s`;
-            
-            row.innerHTML = `
-                <td width="50" class="text-muted small">#${i+1}</td>
-                <td class="fw-bold">${name}</td>
-                <td width="65" class="text-center">
-                    <input type="checkbox" class="form-check-input shadow-sm" ${isChecked} 
-                    ${userRole === 'guest' ? 'disabled' : ''} onchange="togglePaid(${i})">
-                </td>
-            `;
-            if(userRole !== 'guest') {
-                row.onclick = (e) => { if(e.target.type !== 'checkbox') togglePaid(i); };
-            }
+            row.className = rowClass;
+            row.innerHTML = `<td width="50" class="text-muted small">#${i+1}</td><td class="fw-bold">${name}</td><td width="65" class="text-center"><input type="checkbox" class="form-check-input" ${isChecked} ${userRole === 'guest' ? 'disabled' : ''} onchange="togglePaid(${i})"></td>`;
+            if(userRole !== 'guest') row.onclick = (e) => { if(e.target.type !== 'checkbox') togglePaid(i); };
             tableBody.appendChild(row);
         });
         updateSummary();
@@ -256,11 +164,7 @@
         let count = Object.values(paid).filter(v => v === true).length;
         document.getElementById('totalAmount').innerText = `${count * PRICE} บาท`;
         document.getElementById('progressText').innerText = `${count}/${members.length} คน`;
-        
-        if (userRole === 'guest') {
-            document.getElementById('adminArea').classList.add('d-none');
-            document.getElementById('guestArea').classList.remove('d-none');
-        }
+        if (userRole === 'guest') { document.getElementById('adminArea').classList.add('d-none'); document.getElementById('guestArea').classList.remove('d-none'); }
     }
 
     window.filterNames = () => {
@@ -276,7 +180,7 @@
         let blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
         let link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = `รายงานเงินห้อง_${new Date().toLocaleDateString('th-TH')}.csv`;
+        link.download = `รายงานเงินห้อง.csv`;
         link.click();
     }
 
@@ -284,11 +188,11 @@
         const el = document.documentElement;
         const isDark = el.getAttribute('data-theme') === 'dark';
         el.setAttribute('data-theme', isDark ? '' : 'dark');
-        document.getElementById('themeBtn').innerText = isDark ? "🌙 โหมดมืด" : "☀️ โหมดสว่าง";
+        document.getElementById('themeBtn').innerText = isDark ? "☀️" : "🌙";
     }
 
     window.selectAll = async () => { if(confirm("ติ๊กจ่ายทุกคน?")) { members.forEach((_,i)=>paid[i]=true); await set(paidRef, paid); } }
-    window.resetData = async () => { if(confirm("เริ่มสัปดาห์ใหม่?")) await set(paidRef, {}); }
+    window.resetData = async () => { if(confirm("ล้างข้อมูลสัปดาห์นี้?")) await set(paidRef, {}); }
     window.logout = () => { localStorage.clear(); window.location.replace('index.html'); }
 </script>
 </body>
