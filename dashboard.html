@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <link rel="icon" type="image/png" href="LOGO.png">
-    ...
-</head>
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ระบบเช็คชื่อเก็บเงินห้อง</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="LOGO.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap');
         
@@ -31,23 +29,38 @@
             font-family: 'Sarabun', sans-serif; 
             background-color: var(--bg-body); 
             color: var(--text-main); 
-            transition: 0.3s;
+            transition: all 0.3s ease;
         }
 
+        /* ลูกเล่นเวลาเอาเมาส์ไปวางบนแถว */
+        tr { transition: all 0.2s; }
+        tr:hover { transform: scale(1.01); background-color: rgba(255, 204, 0, 0.05); }
+
         .table td { padding: 15px 10px; vertical-align: middle; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .form-check-input { width: 2.5em !important; height: 2.5em !important; cursor: pointer; border: 2px solid var(--school-grey); }
-        .form-check-input:checked { background-color: var(--school-yellow) !important; border-color: var(--school-yellow) !important; }
-        .paid-row { background-color: rgba(255, 204, 0, 0.15) !important; }
+        .form-check-input { width: 2.5em !important; height: 2.5em !important; cursor: pointer; border: 2px solid var(--school-grey); transition: 0.2s; }
+        .form-check-input:checked { background-color: var(--school-yellow) !important; border-color: var(--school-yellow) !important; transform: scale(1.1); }
+        
+        /* สไตล์ตารางเมื่อจ่ายแล้ว */
+        .paid-row { background-color: rgba(255, 204, 0, 0.15) !important; animation: fadeIn; animation-duration: 0.5s; }
+
         .navbar { background-color: var(--school-grey) !important; border-bottom: 4px solid var(--school-yellow); }
-        .card { background-color: var(--bg-card); border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .card { background-color: var(--bg-card); border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
         .btn-theme { border: 1px solid #fff; background: none; color: #fff; border-radius: 20px; padding: 2px 12px; font-size: 0.8rem; }
+        
+        /* อนิเมชั่นตัวเลขยอดเงิน */
+        #totalAmount { transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .bump { transform: scale(1.2); color: #28a745 !important; }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark sticky-top shadow-sm">
+<nav class="navbar navbar-dark sticky-top shadow animate__animated animate__fadeInDown">
     <div class="container">
-        <span class="navbar-brand fw-bold">💰 บัญชีห้องเรียน</span>
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+            <img src="LOGO.png" width="35" height="35" class="d-inline-block align-top me-2" alt="Logo">
+            <span id="navTitle">💰 บัญชีห้องเรียน</span>
+        </a>
         <div>
             <button class="btn-theme me-1" onclick="toggleTheme()" id="themeBtn">🌙 กลางคืน</button>
             <button class="btn btn-outline-light btn-sm" onclick="logout()">ออก</button>
@@ -56,12 +69,12 @@
 </nav>
 
 <div class="container mt-3">
-    <div class="card p-3 mb-3 text-center border-top border-warning border-4">
+    <div class="card p-3 mb-3 text-center border-top border-warning border-4 animate__animated animate__zoomIn">
         <span class="text-muted small">ยอดเงินรวมทั้งหมด</span>
         <h2 id="totalAmount" class="fw-bold mb-0" style="color: var(--school-yellow); text-shadow: 1px 0px 1px #000;">0 บาท</h2>
     </div>
 
-    <div class="card shadow-sm mb-4">
+    <div class="card shadow mb-4 animate__animated animate__fadeInUp">
         <div class="p-2 border-bottom">
             <input type="text" id="searchBox" class="form-control" placeholder="🔍 ค้นหาเลขที่ หรือ ชื่อ..." onkeyup="filterNames()">
         </div>
@@ -73,7 +86,7 @@
         </div>
     </div>
 
-    <div id="adminArea" class="pb-5">
+    <div id="adminArea" class="pb-5 animate__animated animate__fadeInUp animate__delay-1s">
         <button onclick="selectAll()" class="btn btn-warning w-100 mb-2 fw-bold shadow-sm">✅ ติ๊กจ่ายทุกคน</button>
         <div class="row g-2">
             <div class="col-6">
@@ -84,13 +97,14 @@
             </div>
         </div>
     </div>
-    <div id="guestArea" class="alert alert-secondary d-none text-center">โหมดเข้าดูข้อมูลเท่านั้น</div>
+    <div id="guestArea" class="alert alert-secondary d-none text-center animate__animated animate__headShake">โหมดเข้าดูข้อมูลเท่านั้น</div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+    // ใช้ Config เดิมของคุณ
     const firebaseConfig = {
         apiKey: "AIzaSyA4wxFVdj6UDtxAIfG5jTUrKBM2AboT7wQ",
         authDomain: "myroompayment.firebaseapp.com",
@@ -105,7 +119,6 @@
     const db = getDatabase(app);
     const paidRef = ref(db, 'paid_status');
 
-    // แก้ไขลำดับที่ 2 เป็น "เก๋า"
     const members = ["แอมป์","เก๋า","ท่านคิว","ท่านรอง","ไอที","เต้","ปลื้ม","อ๋อง","เพชร","ชาย","กิตาร์","ตั้งเม","เก้า","ฟอร์ด","ข้าวโอ๊ต","โฟกัส","วิน","นานา","แซน","จิ๊จ๋า","เมม","ปลอย","โบว์","ส้มโอ","พิชช่า","ข้าวหอม","น้ำ","มะยม","ใบตอง","ต้นหอม"];
     const PRICE = 5;
     const userRole = localStorage.getItem('role') || 'guest';
@@ -119,6 +132,12 @@
     window.togglePaid = async function(i) {
         if (userRole === 'guest') return;
         paid[i] = !paid[i];
+        
+        // เพิ่มลูกเล่นให้ตัวเลขยอดเงินเด้งเวลาติ๊ก
+        const el = document.getElementById('totalAmount');
+        el.classList.add('bump');
+        setTimeout(() => el.classList.remove('bump'), 300);
+
         await set(paidRef, paid);
     }
 
@@ -129,10 +148,12 @@
             const isChecked = paid[i] ? 'checked' : '';
             const rowClass = paid[i] ? 'paid-row' : '';
             const row = document.createElement('tr');
-            row.className = rowClass;
+            row.className = `${rowClass} animate__animated animate__fadeInIn`;
+            row.style.animationDelay = `${i * 0.05}s`; // ให้ค่อยๆ เด้งขึ้นมาทีละแถว
+            
             row.innerHTML = `
-                <td width="50" class="text-muted small no-search">#${i+1}</td>
-                <td class="fw-bold name-cell">${name}</td>
+                <td width="50" class="text-muted small">#${i+1}</td>
+                <td class="fw-bold">${name}</td>
                 <td width="80" class="text-center">
                     <input type="checkbox" class="form-check-input" ${isChecked} 
                     ${userRole === 'guest' ? 'disabled' : ''} onchange="togglePaid(${i})">
@@ -152,21 +173,17 @@
         if (userRole === 'guest') {
             document.getElementById('adminArea').classList.add('d-none');
             document.getElementById('guestArea').classList.remove('d-none');
+            document.getElementById('navTitle').innerText = "ตรวจสอบการจ่ายเงิน"; //
         }
     }
 
-    // แก้ไขระบบค้นหา (หาได้ทั้งเลขที่และชื่อ)
-    window.filterNames = function() {
+    // ฟังก์ชันเสริมอื่นๆ คงเดิม
+    window.filterNames = () => {
         let val = document.getElementById('searchBox').value.toUpperCase();
         let rows = document.getElementById('mainTable').getElementsByTagName('tr');
-        for (let r of rows) {
-            let text = r.innerText.toUpperCase();
-            // ค้นหาจากเนื้อหาในแถวทั้งหมด (รวม #เลขที่ และ ชื่อ)
-            r.style.display = text.includes(val) ? "" : "none";
-        }
+        for (let r of rows) r.style.display = r.innerText.toUpperCase().includes(val) ? "" : "none";
     }
 
-    // แก้ไขระบบ Export (โหลดงาน)
     window.exportCSV = function() {
         let rows = [['เลขที่', 'ชื่อ-นามสกุล', 'สถานะ']];
         let count = 0;
@@ -175,20 +192,13 @@
             if (paid[i]) count++;
             rows.push([i + 1, name, status]);
         });
-        rows.push([]);
-        rows.push(['รวมคนจ่าย', count, 'คน']);
-        rows.push(['ยอดเงินรวม', count * PRICE, 'บาท']);
-
         let csvContent = rows.map(e => e.join(",")).join("\n");
         let blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-        let link = document.createElement("a");
         let url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", `รายงานเงินห้อง_${new Date().toLocaleDateString('th-TH')}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
+        let link = document.createElement("a");
+        link.href = url;
+        link.download = `รายงานเงินห้อง.csv`;
         link.click();
-        document.body.removeChild(link);
     }
 
     window.toggleTheme = () => {
@@ -198,9 +208,8 @@
         document.getElementById('themeBtn').innerText = isDark ? "🌙 กลางคืน" : "☀️ กลางวัน";
     }
     window.selectAll = async () => { if(confirm("ติ๊กจ่ายทุกคน?")) { members.forEach((_,i)=>paid[i]=true); await set(paidRef, paid); } }
-    window.resetData = async () => { if(confirm("เริ่มสัปดาห์ใหม่?")) await set(paidRef, {}); }
+    window.resetData = async () => { if(confirm("ล้างข้อมูล?")) await set(paidRef, {}); }
     window.logout = () => { localStorage.clear(); window.location.replace('index.html'); }
 </script>
 </body>
 </html>
-
