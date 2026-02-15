@@ -5,40 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>เข้าสู่ระบบ - BWIT Fund</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap');
-        body { 
-            background: linear-gradient(135deg, #4a4a4a 0%, #2d3436 100%); 
-            height: 100vh; display: flex; align-items: center; justify-content: center; 
-            font-family: 'Sarabun', sans-serif;
-        }
-        .login-card { 
-            background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 30px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4); width: 100%; max-width: 400px;
-            backdrop-filter: blur(10px);
-        }
-        .logo-img { width: 80px; margin-bottom: 20px; }
-        .form-control { border-radius: 15px; padding: 12px; border: 2px solid #eee; }
-        .btn-login { border-radius: 15px; padding: 12px; font-weight: bold; background: #ffcc00; border: none; color: #333; transition: 0.3s; }
-        .btn-login:hover { background: #e6b800; transform: translateY(-2px); }
-        .lang-alert { 
-            color: #d63031; font-size: 0.8rem; font-weight: bold; 
-            display: none; margin-top: 8px; text-align: center;
-        }
+        body { background: #2d3436; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Sarabun', sans-serif; }
+        .login-card { background: white; padding: 40px; border-radius: 25px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .logo-img { width: 80px; margin-bottom: 15px; }
+        .lang-alert { color: #d63031; font-size: 0.8rem; display: none; margin-top: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="login-card animate__animated animate__zoomIn text-center">
+    <div class="login-card">
         <img src="LOGO.png" class="logo-img" alt="Logo">
         <h4 class="fw-bold mb-4">ระบบบัญชีห้องเรียน</h4>
-        <div class="mb-3 text-start">
-            <label class="form-label ms-2">รหัสผ่านผู้ดูแล</label>
-            <input type="password" id="passwordInput" class="form-control" placeholder="Enter Password">
-            <div id="langWarning" class="lang-alert animate__animated animate__shakeX">⚠️ โปรดเปลี่ยนเป็นภาษาอังกฤษ!</div>
+        <div class="text-start mb-3">
+            <label class="form-label ms-1">รหัสผ่าน</label>
+            <input type="password" id="passwordInput" class="form-control form-control-lg" style="border-radius: 12px;" placeholder="รหัสผ่านภาษาอังกฤษ">
+            <div id="langWarning" class="lang-alert">⚠️ โปรดเปลี่ยนเป็นภาษาอังกฤษ!</div>
         </div>
-        <button class="btn-login w-100 mb-3" onclick="checkLogin()">เข้าสู่ระบบ</button>
-        <div class="text-muted" style="font-size: 0.8rem; cursor: pointer;" onclick="loginAsGuest()">เข้าดูข้อมูลในฐานะสมาชิก (Guest)</div>
+        <button class="btn btn-warning w-100 fw-bold py-2 mb-2" onclick="checkLogin()" style="border-radius: 12px; height: 50px;">เข้าสู่ระบบ</button>
+        <button class="btn btn-link w-100 text-muted" onclick="loginAsGuest()">เข้าดูในฐานะสมาชิก (Guest)</button>
     </div>
 
     <script>
@@ -47,29 +31,24 @@
 
         passInput.addEventListener('keypress', function (e) {
             const charCode = e.which || e.keyCode;
-            if (charCode >= 3585 && charCode <= 3675) {
-                warning.style.display = 'block';
-            } else {
-                warning.style.display = 'none';
-            }
+            warning.style.display = (charCode >= 3585 && charCode <= 3675) ? 'block' : 'none';
         });
 
         function checkLogin() {
-            const pass = passInput.value;
-            let adminName = "";
-            if(pass === "avt101623") adminName = "แอมป์";
-            else if(pass === "san101623") adminName = "เก๋า";
-            else if(pass === "wasd1915") adminName = "คิว";
+            const p = passInput.value;
+            let n = "";
+            if(p === "avt101623") n = "avt";
+            else if(p === "san101623") n = "san";
+            else if(p === "wasd1915") n = "pet";
 
-            if(adminName) {
+            if(n) {
                 localStorage.setItem('role', 'admin');
-                localStorage.setItem('adminName', adminName);
+                localStorage.setItem('adminName', n);
                 window.location.href = 'dashboard.html';
             } else {
                 alert("รหัสผ่านไม่ถูกต้อง");
             }
         }
-
         function loginAsGuest() {
             localStorage.setItem('role', 'guest');
             window.location.href = 'dashboard.html';
