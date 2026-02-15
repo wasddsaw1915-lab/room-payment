@@ -2,31 +2,81 @@
 
 body { 
     font-family: 'Sarabun', sans-serif; 
-    background-color: #f0f2f5;
+    background-color: #f0f2f5; /* สีพื้นหลังโทนสว่างสบายตา */
+    color: #333;
 }
 
-.center-screen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+/* ปรับแต่ง Navbar ให้ดูพรีเมียม */
+.navbar {
+    background: linear-gradient(135deg, #0d6efd 0%, #0042a5 100%) !important;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
 }
 
-.form-check-input {
-    width: 1.5rem;
-    height: 1.5rem;
-    cursor: pointer;
-}
-
-.form-check-input:disabled {
-    opacity: 0.8;
-    background-color: #eee;
-}
-
+/* ปรับแต่งการ์ด (Card) ให้มีมิติ */
 .card {
-    transition: transform 0.2s;
+    border-radius: 20px !important;
+    border: none !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+    transition: transform 0.3s ease;
 }
 
-.table-success {
-    --bs-table-bg: #d1e7dd;
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* ตารางรายชื่อ */
+.table thead {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+/* แถวที่จ่ายเงินแล้ว (สีเขียวอ่อนสวยๆ) */
+.table-success-custom {
+    background-color: #e8f5e9 !important;
+    transition: background-color 0.3s ease;
+}
+
+/* ปรับแต่ง Checkbox ให้ใหญ่และคลิกง่าย */
+.form-check-input {
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+    cursor: pointer;
+    border: 2px solid #0d6efd;
+}
+
+.form-check-input:checked {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+}
+
+/* ปรับแต่งปุ่ม Export และ Reset */
+.btn-success {
+    background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+    border: none;
+    border-radius: 12px;
+}
+
+.btn-outline-danger {
+    border-radius: 12px;
+    border-width: 2px;
+}
+
+/* ปรับแต่งนาฬิกาและ Badge */
+#date {
+    background-color: #343a40 !important;
+    border-radius: 10px;
+    padding: 8px 15px !important;
+}
+
+/* ส่วนแสดงยอดเงินรวม */
+#totalAmount {
+    color: #0d6efd;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.05);
 }
