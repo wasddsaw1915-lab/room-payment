@@ -3,45 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BWIT Dashboard Pro</title>
+    <title>BWIT FUND - Management</title>
     <link rel="icon" type="image/png" href="LOGO.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
-        body { font-family: 'Sarabun', sans-serif; background: #f4f6f9; padding-bottom: 140px; }
-        .main-nav { background: #212529; color: white; padding: 10px; position: sticky; top: 0; z-index: 2000; border-bottom: 3px solid #ffcc00; }
-        .logo-link { cursor: pointer; transition: transform 0.2s; }
-        .logo-link:hover { transform: scale(1.1); }
-        .stat-card { background: white; border-radius: 15px; padding: 20px; margin: 15px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .search-area { position: sticky; top: 65px; background: #f4f6f9; padding: 10px 0; z-index: 1500; }
+        body { font-family: 'Sarabun', sans-serif; background: #f8f9fa; padding-bottom: 160px; }
+        .navbar-custom { background: #1a1a1a; color: white; padding: 10px; position: sticky; top: 0; z-index: 2000; border-bottom: 3px solid #ffcc00; }
+        .logo-box:hover { opacity: 0.8; transform: scale(1.05); transition: 0.2s; }
+        .stat-card { background: white; border-radius: 15px; padding: 20px; margin-top: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .search-container { position: sticky; top: 70px; background: #f8f9fa; padding: 10px 0; z-index: 1000; }
         .member-list { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .row-item { display: grid; grid-template-columns: 45px 1fr 45px; align-items: center; padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; }
-        .row-item.active { background: #fff9e6; }
+        .item-row { display: grid; grid-template-columns: 45px 1fr 45px; align-items: center; padding: 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+        .item-row.paid { background-color: #fff9e6; }
         .check-box { width: 24px; height: 24px; border: 2px solid #ddd; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; }
-        .check-box.checked { background: #ffcc00; border-color: #ffcc00; }
-        .admin-footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 10px; border-top: 2px solid #ddd; z-index: 2500; }
-        .btn-custom { border-radius: 10px; font-weight: bold; }
-        #clock { color: #ffcc00; font-weight: bold; font-size: 0.9rem; }
+        .check-box.active { background: #ffcc00; border-color: #ffcc00; }
+        .admin-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 12px; border-top: 2px solid #ddd; z-index: 2500; }
+        #live-clock { color: #ffcc00; font-weight: bold; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
-    <nav class="main-nav">
-        <div class="container d-flex align-items-center justify-content-between">
+    <nav class="navbar-custom">
+        <div class="container d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
-                <a href="https://www.bwit.ac.th" target="_blank" class="logo-link">
+                <a href="https://www.bwit.ac.th" target="_blank" class="logo-box">
                     <img src="LOGO.png" width="40" height="40" class="me-2" onerror="this.src='https://www.bwit.ac.th/wp-content/uploads/2021/03/logo-bwit.png'">
                 </a>
                 <div>
-                    <div class="fw-bold" id="adminTitle">Admin: Loading...</div>
-                    <div id="clock">00:00:00</div>
+                    <div class="fw-bold" id="adminNameDisplay">Admin: Loading...</div>
+                    <div id="live-clock">00:00:00</div>
                 </div>
             </div>
-            <button class="btn btn-sm btn-outline-danger btn-custom" onclick="location.href='index.html'">ออก</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="location.href='index.html'">ออก</button>
         </div>
     </nav>
 
@@ -49,43 +48,43 @@
         <div class="stat-card text-center">
             <small class="text-muted fw-bold">ยอดเงินคงเหลือสุทธิ</small>
             <h2 class="fw-bold text-warning mb-2" id="netBalance">0 ฿</h2>
-            <div class="d-flex justify-content-around border-top pt-2">
-                <div class="text-success small">รับรวม: <span id="totalIn">0</span></div>
-                <div class="text-danger small">จ่ายรวม: <span id="totalOut">0</span></div>
+            <div class="row pt-2 border-top">
+                <div class="col-6 border-end text-success small">รับรวม: <span id="sumIn">0</span></div>
+                <div class="col-6 text-danger small">จ่ายรวม: <span id="sumOut">0</span></div>
             </div>
         </div>
 
-        <div class="search-area">
-            <input type="text" id="searchInput" class="form-control shadow-sm p-2 btn-custom" placeholder="🔍 ค้นหาชื่อ หรือ เลขที่..." oninput="renderData()">
+        <div class="search-container">
+            <input type="text" id="searchInput" class="form-control rounded-pill shadow-sm p-3" placeholder="🔍 ค้นหาชื่อ หรือ เลขที่..." oninput="render()">
         </div>
 
-        <div class="member-list" id="memberContainer"></div>
+        <div class="member-list" id="listContent"></div>
     </div>
 
-    <div id="adminPanel" class="admin-footer d-none">
+    <div id="adminPanel" class="admin-bar d-none">
         <div class="d-flex gap-2 mb-2">
-            <button class="btn btn-warning flex-grow-1 btn-custom py-2" onclick="markAll()">ติ๊กทุกคน</button>
-            <button class="btn btn-dark btn-custom" onclick="openDownloadModal()"><i class="bi bi-download"></i> โหลดไฟล์</button>
+            <button class="btn btn-warning flex-grow-1 fw-bold rounded-3" onclick="payAll()">ติ๊กทุกคน</button>
+            <button class="btn btn-dark rounded-3" onclick="openDownload()"><i class="bi bi-download"></i> โหลดไฟล์</button>
         </div>
         <div class="row g-2">
-            <div class="col-4"><button class="btn btn-outline-primary btn-sm w-100 btn-custom" onclick="addExp()">+ เพิ่มรายจ่าย</button></div>
-            <div class="col-4"><button class="btn btn-outline-secondary btn-sm w-100 btn-custom" onclick="clearExp()">❌ ลบรายจ่าย</button></div>
-            <div class="col-4"><button class="btn btn-outline-danger btn-sm w-100 btn-custom" onclick="resetPeople()">🔄 รีเซ็ตคนจ่าย</button></div>
+            <div class="col-4"><button class="btn btn-outline-primary btn-sm w-100 py-2" onclick="addExpense()">+ เพิ่มรายจ่าย</button></div>
+            <div class="col-4"><button class="btn btn-outline-secondary btn-sm w-100 py-2" onclick="clearExpense()">❌ ลบรายจ่าย</button></div>
+            <div class="col-4"><button class="btn btn-outline-danger btn-sm w-100 py-2" onclick="resetPaid()">🔄 รีเซ็ตคนจ่าย</button></div>
         </div>
     </div>
 
-    <div class="modal fade" id="downloadModal" tabindex="-1">
+    <div class="modal fade" id="dlModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content" style="border-radius: 20px;">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="fw-bold">เลือกรูปแบบไฟล์</h5>
+                    <h5 class="fw-bold">ดาวน์โหลดข้อมูล</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body d-flex gap-3 py-4">
-                    <button class="btn btn-success flex-grow-1 py-3 btn-custom" onclick="exportExcel()">
-                        <i class="bi bi-file-earmark-spreadsheet fs-4 d-block"></i> Excel (CSV)
+                    <button class="btn btn-success flex-grow-1 py-3 fw-bold" onclick="getExcel()">
+                        <i class="bi bi-file-earmark-excel fs-4 d-block"></i> Excel
                     </button>
-                    <button class="btn btn-danger flex-grow-1 py-3 btn-custom" onclick="exportPDF()">
+                    <button class="btn btn-danger flex-grow-1 py-3 fw-bold" onclick="getPDF()">
                         <i class="bi bi-file-earmark-pdf fs-4 d-block"></i> PDF
                     </button>
                 </div>
@@ -97,48 +96,49 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    const config = {
+    const firebaseConfig = {
         apiKey: "AIzaSyA4wxFVdj6UDtxAIfG5jTUrKBM2AboT7wQ",
         databaseURL: "https://myroompayment-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "myroompayment",
     };
-    const app = initializeApp(config);
+
+    const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const dbRef = ref(db, 'perfect_v10');
+    const rootRef = ref(db, 'system_v11_final');
 
     const members = ["แอมป์","เก๋า","ท่านคิว","ท่านรอง","ไอที","เต้","ปลื้ม","อ๋อง","เพชร","ชาย","กิตาร์","ตั้งเม","เก้า","ฟอร์ด","ข้าวโอ๊ต","โฟกัส","วิน","นานา","แซน","จิ๊จ๋า","เมม","ปลอย","โบว์","ส้มโอ","พิชช่า","ข้าวหอม","น้ำ","มะยม","ใบตอง","ต้นหอม"];
-    let state = { paid: {}, times: {}, admins: {}, exp: 0 };
+    let data = { paid: {}, times: {}, admins: {}, exp: 0 };
     const role = localStorage.getItem('role');
-    const adminName = localStorage.getItem('adminName') || "Guest";
+    const myName = localStorage.getItem('adminName') || "Guest";
 
-    // นาฬิกา Real-time
+    // นาฬิกาแบบ Real-time
     setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString('th-TH', { hour12: false });
+        document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('th-TH', { hour12: false });
     }, 1000);
 
-    onValue(dbRef, (s) => {
-        state = s.val() || { paid: {}, times: {}, admins: {}, exp: 0 };
-        renderData();
+    onValue(rootRef, (snap) => {
+        data = snap.val() || { paid: {}, times: {}, admins: {}, exp: 0 };
+        render();
     });
 
-    window.renderData = () => {
-        const container = document.getElementById('memberContainer');
+    window.render = () => {
+        const container = document.getElementById('listContent');
         const term = document.getElementById('searchInput').value.toLowerCase();
         let html = "";
 
         members.forEach((name, i) => {
             const no = i + 1;
-            const isPaid = state.paid?.[i] === 'paid';
+            const isPaid = data.paid?.[i] === 'paid';
             if (term && !name.includes(term) && !no.toString().includes(term)) return;
 
             html += `
-                <div class="row-item ${isPaid ? 'active' : ''}" onclick="toggleStatus(${i})">
+                <div class="item-row ${isPaid ? 'paid' : ''}" onclick="toggleStatus(${i})">
                     <div class="text-muted small">#${no}</div>
                     <div>
                         <div class="fw-bold">${name}</div>
-                        ${isPaid ? `<small class="text-muted" style="font-size:10px">⏰ ${state.times[i]} | โดย: ${state.admins[i]}</small>` : ''}
+                        ${isPaid ? `<small class="text-muted" style="font-size:10px">⏰ ${data.times[i]} | โดย: ${data.admins[i]}</small>` : ''}
                     </div>
-                    <div class="check-box ${isPaid ? 'checked' : ''}">${isPaid ? '✓' : ''}</div>
+                    <div class="check-box ${isPaid ? 'active' : ''}">${isPaid ? '✓' : ''}</div>
                 </div>
             `;
         });
@@ -148,77 +148,75 @@
 
     window.toggleStatus = async (i) => {
         if(role !== 'admin') return;
-        const isPaid = state.paid?.[i] === 'paid';
-        const time = new Date().toLocaleTimeString('th-TH', { hour12: false, hour: '2-digit', minute: '2-digit' });
-        const updates = {};
-        updates[`paid/${i}`] = isPaid ? null : 'paid';
-        updates[`times/${i}`] = isPaid ? null : time;
-        updates[`admins/${i}`] = isPaid ? null : adminName;
-        await update(dbRef, updates);
+        const isPaid = data.paid?.[i] === 'paid';
+        const nowTime = new Date().toLocaleTimeString('th-TH', { hour12: false, hour: '2-digit', minute: '2-digit' });
+        const up = {};
+        up[`paid/${i}`] = isPaid ? null : 'paid';
+        up[`times/${i}`] = isPaid ? null : nowTime;
+        up[`admins/${i}`] = isPaid ? null : myName;
+        await update(rootRef, up);
     };
 
     function updateUI() {
-        const count = Object.values(state.paid || {}).filter(v => v === 'paid').length;
+        const count = Object.values(data.paid || {}).filter(v => v === 'paid').length;
         const inc = count * 5;
-        const out = state.exp || 0;
+        const out = data.exp || 0;
         document.getElementById('netBalance').innerText = (inc - out) + " ฿";
-        document.getElementById('totalIn').innerText = inc;
-        document.getElementById('totalOut').innerText = out;
+        document.getElementById('sumIn').innerText = inc;
+        document.getElementById('sumOut').innerText = out;
         if(role === 'admin') {
             document.getElementById('adminPanel').classList.remove('d-none');
-            document.getElementById('adminTitle').innerText = "Admin: " + adminName;
+            document.getElementById('adminNameDisplay').innerText = "Admin: " + myName;
         }
     }
 
-    // Modal & Export
-    window.openDownloadModal = () => {
-        new bootstrap.Modal(document.getElementById('downloadModal')).show();
-    };
+    // ฟังก์ชันเครื่องมือต่างๆ
+    window.openDownload = () => new bootstrap.Modal(document.getElementById('dlModal')).show();
 
-    window.exportExcel = () => {
-        let csv = "\uFEFFลำดับ,ชื่อ,สถานะ,เวลา,ผู้รับ\n";
+    window.getExcel = () => {
+        let csv = "\uFEFFลำดับ,ชื่อ,สถานะ,เวลา,ผู้บันทึก\n";
         members.forEach((n, i) => {
-            csv += `${i+1},${n},${state.paid?.[i]?'จ่ายแล้ว':'ค้าง'},${state.times?.[i]||'-'},${state.admins?.[i]||'-'}\n`;
+            csv += `${i+1},${n},${data.paid?.[i]?'จ่ายแล้ว':'ค้างจ่าย'},${data.times?.[i]||'-'},${data.admins?.[i]||'-'}\n`;
         });
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = `BWIT_Report_${new Date().toLocaleDateString()}.csv`;
+        a.download = `BWIT_Fund_${new Date().toLocaleDateString()}.csv`;
         a.click();
     };
 
-    window.exportPDF = () => {
+    window.getPDF = () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         doc.text("BWIT FUND REPORT", 14, 15);
-        const data = members.map((n, i) => [i+1, n, state.paid?.[i]?'Paid':'Unpaid', state.times?.[i]||'-']);
-        doc.autoTable({ head: [['No.', 'Name', 'Status', 'Time']], body: data, startY: 20 });
+        const rows = members.map((n, i) => [i+1, n, data.paid?.[i]?'Paid':'Unpaid', data.times?.[i]||'-']);
+        doc.autoTable({ head: [['No.', 'Name', 'Status', 'Time']], body: rows, startY: 22 });
         doc.save("Report.pdf");
     };
 
-    window.markAll = async () => {
-        if(!confirm("ติ๊กทุกคน?")) return;
+    window.payAll = async () => {
+        if(!confirm("ยืนยันติ๊กจ่ายทุกคน?")) return;
         const up = {};
         members.forEach((_, i) => { 
             up[`paid/${i}`] = 'paid'; 
             up[`times/${i}`] = '08:00'; 
-            up[`admins/${i}`] = adminName; 
+            up[`admins/${i}`] = myName; 
         });
-        await update(dbRef, up);
+        await update(rootRef, up);
     };
 
-    window.addExp = async () => {
-        const val = prompt("เพิ่มรายจ่าย:");
-        if(val) await update(dbRef, { exp: (state.exp || 0) + parseInt(val) });
+    window.addExpense = async () => {
+        const val = prompt("จำนวนเงินรายจ่ายที่จะเพิ่ม:");
+        if(val && !isNaN(val)) await update(rootRef, { exp: (data.exp || 0) + parseInt(val) });
     };
 
-    window.clearExp = async () => {
-        if(confirm("ล้างรายจ่ายเป็น 0?")) await update(dbRef, { exp: 0 });
+    window.clearExpense = async () => {
+        if(confirm("รีเซ็ตรายจ่ายทั้งหมดเป็น 0?")) await update(rootRef, { exp: 0 });
     };
 
     window.resetPeople = async () => {
-        if(confirm("ล้างคนจ่ายทั้งหมด?")) {
-            await set(dbRef, { paid: {}, times: {}, admins: {}, exp: state.exp });
+        if(confirm("ล้างรายชื่อคนจ่ายทั้งหมด? (ยอดรายจ่ายไม่หาย)")) {
+            await set(rootRef, { paid: {}, times: {}, admins: {}, exp: data.exp });
         }
     };
 </script>
