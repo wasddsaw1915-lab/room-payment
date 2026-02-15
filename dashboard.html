@@ -3,108 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BWIT Fund - Professional</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <title>BWIT Fund Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="LOGO.png">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap');
-        :root { --bg-body: #f8f9fa; --bg-card: #ffffff; --text-main: #2d3436; --school-yellow: #ffcc00; --school-grey: #4a4a4a; }
-        [data-theme="dark"] { --bg-body: #121212; --bg-card: #1e1e1e; --text-main: #f5f6fa; --school-yellow: #f1c40f; }
-        
-        body { font-family: 'Sarabun', sans-serif; background-color: var(--bg-body); color: var(--text-main); transition: 0.3s; padding-bottom: 120px; }
-        .navbar { background: var(--school-grey) !important; border-bottom: 3px solid var(--school-yellow); }
-        
-        .summary-card { 
-            background: var(--bg-card); border-radius: 25px; padding: 25px; 
-            margin-top: -30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-            position: relative; z-index: 10;
-        }
-        .stat-val { font-size: 2rem; font-weight: 700; color: var(--school-yellow); }
-        
-        .member-table { background: var(--bg-card); border-radius: 20px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .table tr { transition: 0.2s; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.03); }
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; background-color: #f4f7f6; padding-bottom: 120px; }
+        .navbar { background: #4a4a4a !important; border-bottom: 4px solid #ffcc00; }
+        .summary-card { background: white; border-radius: 20px; padding: 20px; margin-top: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .stat-val { font-size: 1.8rem; font-weight: 700; color: #ffcc00; }
+        .table-container { background: white; border-radius: 20px; overflow: hidden; margin-top: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .paid-row { background-color: rgba(255, 204, 0, 0.1) !important; }
-        .exempt-row { background-color: rgba(108, 117, 125, 0.1) !important; opacity: 0.6; text-decoration: line-through; }
-        
-        .admin-tag { font-size: 0.65rem; background: #eee; padding: 2px 6px; border-radius: 5px; color: #666; }
-        .qr-thumb { width: 65px; border: 3px solid var(--school-yellow); border-radius: 12px; cursor: pointer; transition: 0.3s; }
-        .qr-thumb:hover { transform: scale(1.1); }
-
-        .admin-actions { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
-            width: 95%; max-width: 500px; background: var(--bg-card); 
-            padding: 12px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
-            display: flex; gap: 8px; z-index: 1000;
-        }
-        .form-check-input { width: 2.2em; height: 2.2em; cursor: pointer; border-radius: 10px !important; }
-        
-        @media print { .navbar, .admin-actions, .search-container, .btn-sm, .qr-thumb { display: none !important; } }
+        .exempt-row { background-color: #eee !important; opacity: 0.6; text-decoration: line-through; }
+        .admin-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 500px; background: white; padding: 12px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; gap: 8px; z-index: 9999; }
+        .qr-img { width: 55px; height: 55px; border: 2px solid #ffcc00; border-radius: 10px; cursor: pointer; }
+        .admin-tag { font-size: 0.65rem; color: #888; background: #f0f0f0; padding: 2px 5px; border-radius: 4px; }
+        @media print { .navbar, .admin-bar, .search-box, .btn-sm { display: none !important; } }
     </style>
 </head>
-<body data-theme="light">
+<body>
 
 <nav class="navbar navbar-dark sticky-top">
-    <div class="container d-flex justify-content-between">
-        <a class="navbar-brand fw-bold d-flex align-items-center" href="https://www.bwit.ac.th" target="_blank">
-            <img src="LOGO.png" width="30" height="30" class="me-2" alt="Logo">
-            <span style="font-size: 0.9rem;">บึงสามพันวิทยาคม</span>
-        </a>
-        <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-outline-light rounded-pill" onclick="toggleTheme()" id="themeBtn">🌙</button>
-            <button class="btn btn-sm btn-outline-light rounded-pill" onclick="window.print()">🖨️ PDF</button>
-            <button class="btn btn-sm btn-danger rounded-pill px-3" onclick="logout()">🚪 ออก</button>
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="navbar-brand fw-bold d-flex align-items-center">
+            <img src="LOGO.png" width="35" height="35" class="me-2">
+            <span>บึงสามพันวิทยาคม</span>
         </div>
+        <button class="btn btn-sm btn-danger rounded-pill" onclick="logout()">ออก</button>
     </div>
 </nav>
 
 <div class="container">
-    <div class="summary-card animate__animated animate__fadeInDown">
-        <div class="row align-items-center text-center text-md-start">
+    <div class="summary-card">
+        <div class="row align-items-center">
             <div class="col-8">
-                <small class="text-muted">เงินคงเหลือในกระเป๋าจริง</small>
+                <small class="text-muted">เงินคงเหลือในมือ</small>
                 <div id="netBalance" class="stat-val">0 ฿</div>
-                <div style="font-size: 0.8rem;">
-                    <span class="text-success fw-bold">รับ: <span id="totalIncome">0</span></span> | 
-                    <span class="text-danger fw-bold">จ่าย: <span id="totalExpense">0</span></span>
-                </div>
+                <div class="small">รับ: <span id="totalIn" class="text-success">0</span> | จ่าย: <span id="totalOut" class="text-danger">0</span></div>
             </div>
             <div class="col-4 text-center">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=08XXXXXXXX" class="qr-thumb" onclick="alert('สแกนจ่ายผ่าน PromptPay')">
-                <div style="font-size: 0.6rem; margin-top: 5px;">สแกนจ่าย</div>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=08XXXXXXXX" class="qr-img" onclick="alert('สแกนจ่าย PromptPay')">
+                <div style="font-size: 0.5rem;">สแกนจ่าย</div>
             </div>
         </div>
     </div>
 
-    <div id="fastPayers" class="mt-3 p-2 bg-white rounded-3 shadow-sm d-none animate__animated animate__flash" style="font-size: 0.8rem; border-left: 5px solid #2ecc71;">
-        🚀 <b>จ่ายไวก่อนใคร:</b> <span id="fastestNames">...</span>
-    </div>
-
-    <div class="search-container mt-3">
-        <input type="text" id="searchBox" class="form-control mb-2 shadow-sm" style="border-radius: 15px;" placeholder="🔍 ค้นหาเพื่อน..." onkeyup="renderTable()">
-        <div class="d-flex gap-1 overflow-auto pb-2">
-            <button class="btn btn-sm btn-light border flex-grow-1" onclick="setFilter('all')">ทั้งหมด</button>
-            <button class="btn btn-sm btn-light border flex-grow-1 text-danger" onclick="setFilter('unpaid')">ค้างจ่าย</button>
-            <button class="btn btn-sm btn-warning flex-grow-1" onclick="addExpense()">💸 ลงรายจ่าย</button>
+    <div class="mt-3">
+        <input type="text" id="searchBox" class="form-control rounded-pill shadow-sm mb-2" placeholder="🔍 ค้นหาชื่อเพื่อน..." onkeyup="renderTable()">
+        <div class="d-flex gap-1 overflow-auto pb-1">
+            <button class="btn btn-sm btn-light border px-3" onclick="setFilter('all')">ทั้งหมด</button>
+            <button class="btn btn-sm btn-light border px-3 text-danger" onclick="setFilter('unpaid')">ค้างจ่าย</button>
+            <button class="btn btn-sm btn-warning px-3" onclick="addExpense()">💸 ลงรายจ่าย</button>
         </div>
     </div>
 
-    <div class="member-table shadow-sm animate__animated animate__fadeInUp">
+    <div class="table-container">
         <table class="table table-hover mb-0">
             <tbody id="mainTable"></tbody>
         </table>
     </div>
 </div>
 
-<div id="adminArea" class="admin-actions d-none animate__animated animate__slideInUp">
-    <button onclick="selectAll()" class="btn btn-warning flex-grow-1 fw-bold rounded-pill">✅ จ่ายครบ</button>
+<div id="adminArea" class="admin-bar d-none">
+    <button onclick="selectAll()" class="btn btn-warning flex-grow-1 fw-bold rounded-pill">จ่ายครบ</button>
     <button onclick="exportCSV()" class="btn btn-light border rounded-pill">📥 CSV</button>
-    <button onclick="resetData()" class="btn btn-outline-danger rounded-pill">🔄 ล้างข้อมูล</button>
+    <button onclick="window.print()" class="btn btn-light border rounded-pill">🖨️ PDF</button>
+    <button onclick="resetData()" class="btn btn-outline-danger rounded-pill">🔄 ล้าง</button>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, set, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyA4wxFVdj6UDtxAIfG5jTUrKBM2AboT7wQ",
@@ -118,69 +86,34 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const dataRef = ref(db, 'ultimate_v3');
-    const resetRef = ref(db, 'last_reset_v3');
+    const dataRef = ref(db, 'class_fund_vFinal');
 
     const members = ["แอมป์","เก๋า","ท่านคิว","ท่านรอง","ไอที","เต้","ปลื้ม","อ๋อง","เพชร","ชาย","กิตาร์","ตั้งเม","เก้า","ฟอร์ด","ข้าวโอ๊ต","โฟกัส","วิน","นานา","แซน","จิ๊จ๋า","เมม","ปลอย","โบว์","ส้มโอ","พิชช่า","ข้าวหอม","น้ำ","มะยม","ใบตอง","ต้นหอม"];
     const userRole = localStorage.getItem('role') || 'guest';
     const adminName = localStorage.getItem('adminName') || 'Guest';
     let currentFilter = 'all';
-    let roomData = { paid_status: {}, notes: {}, times: {}, admins: {}, expenses: 0 };
-
-    // เสียงแจ้งเตือน (ฟีเจอร์เก่า)
-    function playTickSound() {
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const g = ctx.createGain();
-            osc.connect(g); g.connect(ctx.destination);
-            osc.type = 'sine'; osc.frequency.setValueAtTime(1200, ctx.currentTime);
-            g.gain.setValueAtTime(0.1, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-            osc.start(); osc.stop(ctx.currentTime + 0.1);
-        } catch(e){}
-    }
-
-    // Auto Reset วันอาทิตย์
-    async function checkAutoReset() {
-        const now = new Date();
-        if (now.getDay() === 0) {
-            const weekKey = `${now.getFullYear()}-W${Math.ceil(now.getDate() / 7)}`;
-            const snap = await get(resetRef);
-            if (snap.val() !== weekKey) {
-                await update(dataRef, { paid_status: {}, times: {}, admins: {} });
-                await set(resetRef, weekKey);
-            }
-        }
-    }
+    let roomData = { paid_status: {}, times: {}, admins: {}, expenses: 0 };
 
     onValue(dataRef, (snapshot) => {
-        roomData = snapshot.val() || { paid_status: {}, notes: {}, times: {}, admins: {}, expenses: 0 };
+        roomData = snapshot.val() || { paid_status: {}, times: {}, admins: {}, expenses: 0 };
         renderTable();
-        updateFinancials();
-        checkAutoReset();
+        updateStats();
     });
 
     window.togglePaid = async (i) => {
         if (userRole === 'guest') return;
         const s = roomData.paid_status[i];
         let next = !s ? "paid" : (s === "paid" ? "exempt" : null);
-        if(next === "paid") playTickSound();
-        const updates = {};
-        updates[`paid_status/${i}`] = next;
-        updates[`times/${i}`] = next === "paid" ? new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}) : null;
-        updates[`admins/${i}`] = next ? adminName : null;
-        await update(dataRef, updates);
-    };
-
-    window.addExpense = async () => {
-        if (userRole === 'guest') return;
-        const amt = prompt("ยอดรายจ่ายสัปดาห์นี้:");
-        if (amt && !isNaN(amt)) await update(dataRef, { expenses: (roomData.expenses || 0) + parseInt(amt) });
+        const up = {};
+        up[`paid_status/${i}`] = next;
+        up[`times/${i}`] = next === "paid" ? new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}) : null;
+        up[`admins/${i}`] = next ? adminName : null;
+        await update(dataRef, up);
     };
 
     function renderTable() {
-        const tableBody = document.getElementById('mainTable');
-        tableBody.innerHTML = "";
+        const tbody = document.getElementById('mainTable');
+        tbody.innerHTML = "";
         const search = document.getElementById('searchBox').value.toLowerCase();
 
         members.forEach((name, i) => {
@@ -194,61 +127,49 @@
             if (status === 'exempt') row.className = 'exempt-row';
 
             row.innerHTML = `
-                <td width="40" class="text-center small">#${i+1}</td>
+                <td width="50" class="text-center small text-muted">#${i+1}</td>
                 <td onclick="togglePaid(${i})">
                     <div class="fw-bold">${name}</div>
-                    <div class="d-flex gap-2 align-items-center">
-                        ${status === 'paid' ? `<span style="font-size:0.65rem; color:#888;">⏰ ${roomData.times[i]}</span>` : ''}
+                    <div class="d-flex gap-2">
+                        ${status === 'paid' ? `<span class="small text-muted">⏰ ${roomData.times[i]}</span>` : ''}
                         ${roomData.admins[i] ? `<span class="admin-tag">โดย: ${roomData.admins[i]}</span>` : ''}
                     </div>
                 </td>
-                <td width="60" class="text-center">
-                    <input type="checkbox" class="form-check-input" ${status==='paid'?'checked':''} ${userRole==='guest'?'disabled':''} onchange="togglePaid(${i})">
+                <td width="50" class="text-center">
+                    <input type="checkbox" class="form-check-input" ${status==='paid'?'checked':''} ${userRole==='guest'?'disabled':''}>
                 </td>
             `;
-            tableBody.appendChild(row);
+            tbody.appendChild(row);
         });
     }
 
-    function updateFinancials() {
+    function updateStats() {
         const count = Object.values(roomData.paid_status || {}).filter(v => v === 'paid').length;
         const income = count * 5;
         const expense = roomData.expenses || 0;
+        document.getElementById('totalIn').innerText = income;
+        document.getElementById('totalOut').innerText = expense;
         document.getElementById('netBalance').innerText = (income - expense) + " ฿";
-        document.getElementById('totalIncome').innerText = income;
-        document.getElementById('totalExpense').innerText = expense;
-        
         if (userRole !== 'guest') document.getElementById('adminArea').classList.remove('d-none');
-        
-        // Fastest Payers
-        const payers = [];
-        for(let i in roomData.times) if(roomData.paid_status[i] === 'paid') payers.push(members[i]);
-        if(payers.length > 0) {
-            document.getElementById('fastPayers').classList.remove('d-none');
-            document.getElementById('fastestNames').innerText = payers.slice(0,3).join(", ");
-        }
     }
 
-    window.toggleTheme = () => {
-        const body = document.body;
-        const isDark = body.getAttribute('data-theme') === 'dark';
-        body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-        document.getElementById('themeBtn').innerText = isDark ? "🌙" : "☀️";
+    window.addExpense = async () => {
+        if (userRole === 'guest') return;
+        const amt = prompt("ระบุยอดรายจ่าย:");
+        if (amt && !isNaN(amt)) await update(dataRef, { expenses: (roomData.expenses || 0) + parseInt(amt) });
     };
 
     window.exportCSV = () => {
-        let content = "\uFEFFเลขที่,ชื่อ,สถานะ,เวลา,ผู้บันทึก\n";
-        members.forEach((n, i) => {
-            content += `${i+1},${n},${roomData.paid_status[i] || 'ค้าง'},${roomData.times[i] || '-'},${roomData.admins[i] || '-'}\n`;
-        });
-        const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+        let csv = "\uFEFFเลขที่,ชื่อ,สถานะ,เวลา,Admin\n";
+        members.forEach((n, i) => csv += `${i+1},${n},${roomData.paid_status[i] || 'ค้างจ่าย'},${roomData.times[i] || '-'},${roomData.admins[i] || '-'}\n`);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `รายงาน_${new Date().toLocaleDateString()}.csv`;
+        a.download = 'รายงานเงินห้อง.csv';
         a.click();
     };
 
-    window.resetData = async () => { if(confirm("ล้างข้อมูลสัปดาห์นี้ทั้งหมด?")) await set(dataRef, { expenses: roomData.expenses }); };
+    window.resetData = async () => { if(confirm("ล้างข้อมูลรายสัปดาห์?")) await set(dataRef, { expenses: roomData.expenses }); };
     window.logout = () => { localStorage.clear(); window.location.replace('index.html'); };
     window.setFilter = (f) => { currentFilter = f; renderTable(); };
     window.selectAll = async () => {
