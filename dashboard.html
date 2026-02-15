@@ -47,40 +47,113 @@
                 </div>
             </div>
         </div>
+
         <div class="col-lg-4">
             <div class="card p-4 text-center mb-3 border-primary border-top border-4">
                 <h5 class="text-muted">ยอดเงินรวมสัปดาห์นี้</h5>
                 <h1 id="totalAmount" class="display-4 fw-bold text-primary">0 บาท</h1>
             </div>
+
             <div id="adminArea">
                 <button onclick="exportCSV()" class="btn btn-success w-100 mb-2 py-3 fw-bold shadow-sm">📥 Export Excel + สรุปยอด</button>
                 <button onclick="resetData()" class="btn btn-outline-danger w-100 py-2">🔄 ล้างข้อมูลทั้งหมด</button>
             </div>
-            <div id="guestArea" class="alert alert-warning d-none text-center fw-bold">⚠️ โหมดดูอย่างเดียว</div>
+
+            <div id="guestArea" class="alert alert-warning d-none text-center fw-bold">
+                ⚠️ โหมดดูอย่างเดียว (สมาชิก)
+            </div>
         </div>
     </div>
 </div>
 
 <script src="js/data.js"></script>
 <script src="js/login.js"></script>
-<script src="js/check.js"></script> <script src="js/export.js"></script>
-
+<script src="js/export.js"></script>
 <script>
+    // ดึง URL จากไฟล์เดิมของคุณ
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxHFMKkcMQmOXJ44zQtWSLHp4p2N8ZDCiwMeV5ey2GnOPXame5MMPydEYQICIldlgcb7g/exec'; 
+
     if (localStorage.getItem('login') !== 'true') window.location.replace('index.html');
+    
+    const userRole = localStorage.getItem('role') || 'guest';
+    let paid = {}; 
 
-    // ทับฟังก์ชัน togglePaid เดิมเพื่อให้มีเสียง
-    const oldTogglePaid = window.togglePaid;
-    window.togglePaid = async function(i) {
-        if (!paid[i]) document.getElementById('soundSuccess').play().catch(() => {});
-        await oldTogglePaid(i); 
-    };
+    // ฟังก์ชันโหลดข้อมูลจาก Google Sheets
+    async function loadData() {
+        try {
+            const response = await fetch(`${scriptURL}?t=${new Date().getTime()}`);
+            const data = await response.json();
+            paid = data || {};
+            renderTable();
+        } catch (e) {
+            console.error("โหลดข้อมูลไม่สำเร็จ:", e);
+            renderTable();
+        }
+    }
 
-    // ระบบนาฬิกา
-    setInterval(() => {
-        document.getElementById('date').innerText = new Date().toLocaleString('th-TH');
-    }, 1000);
+    // ฟังก์ชันวาดตารางรายชื่อเพื่อน
+    function renderTable() {
+        const tableBody = document.getElementById('mainTable');
+        tableBody.innerHTML = "";
+        members.forEach((name, i) => {
+            const row = document.createElement('tr');
+            if (paid[i]) row.classList.add('table-success-custom');
+            const disabled = (userRole === 'guest') ? 'disabled' : '';
+            
+            row.innerHTML = `
+                <td>${i + 1}</td>
+                <td class="fw-medium">${name}</td>
+                <td class="text-center">
+                    <input type="checkbox" class="form-check-input" ${paid[i] ? 'checked' : ''} 
+                    ${disabled} onchange="togglePaid(${i})">
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+        updateSummary();
+    }
 
-    // ระบบค้นหา
+    // ฟังก์ชันติ๊กจ่ายเงินพร้อมเสียง
+    async function togglePaid(i) {
+        if (userRole === 'guest') return;
+        
+        if (!paid[i]) {
+            document.getElementById('soundSuccess').play().catch(() => {});
+        }
+        
+        paid[i] = !paid[i];
+        renderTable();
+        
+        // ส่งข้อมูลไปบันทึกที่ Google
+        try {
+            await fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(paid)
+            });
+        } catch (e) { console.error(e); }
+    }
+
+    function updateSummary() {
+        let count = Object.values(paid).filter(v => v === true).length;
+        document.getElementById('totalAmount').innerText = `${count * PRICE} บาท`;
+        if (userRole === 'guest') {
+            document.getElementById('adminArea').classList.add('d-none');
+            document.getElementById('guestArea').classList.remove('d-none');
+        }
+    }
+
+    function resetData() {
+        if (confirm("ล้างข้อมูลทั้งหมด?")) {
+            document.getElementById('soundReset').play().catch(() => {});
+            paid = {};
+            renderTable();
+            // บันทึกค่าว่างไปที่ Google
+            fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({}) });
+        }
+    }
+
     function filterNames() {
         let input = document.getElementById('searchBox').value.toUpperCase();
         let rows = document.getElementById('mainTable').getElementsByTagName('tr');
@@ -90,14 +163,10 @@
         }
     }
 
-    function resetData() {
-        if (confirm("ล้างข้อมูลทั้งหมด?")) {
-            document.getElementById('soundReset').play().catch(() => {});
-            paid = {};
-            saveData();
-            renderTable();
-        }
-    }
+    // เริ่มทำงาน
+    setInterval(() => { document.getElementById('date').innerText = new Date().toLocaleString('th-TH'); }, 1000);
+    loadData();
+    setInterval(loadData, 30000); // รีเฟรชข้อมูลทุก 30 วินาที
 </script>
 </body>
 </html>
