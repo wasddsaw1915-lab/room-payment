@@ -2,99 +2,116 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเช็คชื่อเก็บเงินห้อง (โทนโรงเรียน)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ระบบเช็คชื่อเก็บเงินห้อง</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap');
         
-        /* โหมดกลางวัน (Default) */
         :root {
-            --bg-body: #f8f9fa;
+            --bg-body: #f2f2f2;
             --bg-card: #ffffff;
             --text-main: #333333;
             --school-yellow: #ffcc00;
             --school-grey: #6c757d;
+            --row-hover: #f9f9f9;
         }
 
-        /* โหมดกลางคืน */
         [data-theme="dark"] {
-            --bg-body: #1a1a1a;
-            --bg-card: #2d2d2d;
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
             --text-main: #e0e0e0;
             --school-yellow: #ffdb4d;
+            --row-hover: #2a2a2a;
         }
 
-        body { font-family: 'Sarabun', sans-serif; background-color: var(--bg-body); color: var(--text-main); transition: 0.3s; }
-        .card { background-color: var(--bg-card); border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; color: var(--text-main); }
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            transition: 0.3s;
+            user-select: none; /* ป้องกันการคลุมดำเวลาเผลอกดค้าง */
+        }
+
+        /* ปรับแต่งตารางให้กดง่ายในมือถือ */
+        .table td {
+            padding: 15px 10px; /* เพิ่มพื้นที่กด */
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* ปุ่ม Checkbox ขนาดใหญ่สะใจ */
+        .form-check-input {
+            width: 2.5em !important;
+            height: 2.5em !important;
+            cursor: pointer;
+            margin: 0;
+            border: 2px solid var(--school-grey);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--school-yellow) !important;
+            border-color: var(--school-yellow) !important;
+        }
+
+        /* แถวที่ติ๊กแล้วให้เปลี่ยนสีทั้งแถว */
+        .paid-row {
+            background-color: rgba(255, 204, 0, 0.15) !important;
+        }
+
         .navbar { background-color: var(--school-grey) !important; border-bottom: 4px solid var(--school-yellow); }
-        .table { color: var(--text-main); }
-        .table-success-custom { background-color: rgba(255, 204, 0, 0.2) !important; } /* สีเหลืองจางๆ เวลาจ่ายแล้ว */
+        .card { background-color: var(--bg-card); border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         
-        .btn-theme { cursor: pointer; padding: 5px 15px; border-radius: 20px; border: 1px solid #fff; background: none; color: #fff; font-size: 0.8rem; }
+        /* ปุ่มสลับโหมด */
+        .btn-theme { border: 1px solid #fff; background: none; color: #fff; border-radius: 20px; padding: 2px 12px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark shadow-sm mb-4">
+<nav class="navbar navbar-dark sticky-top shadow-sm">
     <div class="container">
-        <span class="navbar-brand fw-bold">💰 ระบบบัญชีห้องเรียน</span>
+        <span class="navbar-brand fw-bold">💰 บัญชีห้องเรียน</span>
         <div>
-            <button class="btn-theme me-2" onclick="toggleTheme()" id="themeBtn">🌙 โหมดกลางคืน</button>
+            <button class="btn-theme me-1" onclick="toggleTheme()" id="themeBtn">🌙 กลางคืน</button>
             <button class="btn btn-outline-light btn-sm" onclick="logout()">ออก</button>
         </div>
     </div>
 </nav>
 
-<div class="container">
-    <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="card p-4 shadow-sm">
-                <div class="d-flex justify-content-between mb-3">
-                    <input type="text" id="searchBox" class="form-control w-50" placeholder="🔍 ค้นหาชื่อเพื่อน..." onkeyup="filterNames()">
-                    <div id="date" class="badge bg-secondary p-2"></div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr><th>#</th><th>รายชื่อ</th><th class="text-center">สถานะ</th></tr>
-                        </thead>
-                        <tbody id="mainTable"></tbody>
-                    </table>
-                </div>
-            </div>
+<div class="container mt-3">
+    <div class="card p-3 mb-3 text-center border-top border-warning border-4">
+        <span class="text-muted small">ยอดเงินรวมทั้งหมด</span>
+        <h2 id="totalAmount" class="fw-bold mb-0" style="color: var(--school-yellow);">0 บาท</h2>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="p-2 border-bottom">
+            <input type="text" id="searchBox" class="form-control" placeholder="🔍 พิมพ์ชื่อเพื่อค้นหา..." onkeyup="filterNames()">
         </div>
-        <div class="col-lg-4 text-center">
-            <div class="card p-4 border-top border-warning border-4 mb-3 shadow-sm">
-                <h6 class="text-muted">ยอดเงินรวมสัปดาห์นี้</h6>
-                <h2 id="totalAmount" class="fw-bold" style="color: var(--school-yellow); text-shadow: 1px 1px 0px #000;">0 บาท</h2>
-            </div>
-            <div id="adminArea">
-                <button onclick="exportCSV()" class="btn btn-secondary w-100 mb-2">📥 ดาวน์โหลดรายงาน</button>
-                <button onclick="selectAll()" class="btn btn-warning w-100 mb-2 fw-bold">✅ ติ๊กจ่ายทั้งหมด</button>
-                <button onclick="resetData()" class="btn btn-outline-danger btn-sm w-100">🔄 รีเซ็ตข้อมูล</button>
-            </div>
-            <div id="guestArea" class="alert alert-secondary d-none">โหมดดูข้อมูลเท่านั้น</div>
+        
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <tbody id="mainTable">
+                    </tbody>
+            </table>
         </div>
     </div>
+
+    <div id="adminArea" class="pb-5">
+        <button onclick="selectAll()" class="btn btn-warning w-100 mb-2 fw-bold">✅ ติ๊กจ่ายทั้งหมด</button>
+        <div class="row g-2">
+            <div class="col-6">
+                <button onclick="exportCSV()" class="btn btn-secondary w-100">📥 โหลดรายงาน</button>
+            </div>
+            <div class="col-6">
+                <button onclick="resetData()" class="btn btn-outline-danger w-100">🔄 ล้างข้อมูล</button>
+            </div>
+        </div>
+    </div>
+    <div id="guestArea" class="alert alert-secondary d-none text-center">โหมดเข้าดูข้อมูลเท่านั้น</div>
 </div>
 
-<script src="js/data.js"></script>
 <script type="module">
-    // --- ระบบ Theme ---
-    window.toggleTheme = function() {
-        const body = document.documentElement;
-        const btn = document.getElementById('themeBtn');
-        if (body.getAttribute('data-theme') === 'dark') {
-            body.removeAttribute('data-theme');
-            btn.innerText = "🌙 โหมดกลางคืน";
-        } else {
-            body.setAttribute('data-theme', 'dark');
-            btn.innerText = "☀️ โหมดกลางวัน";
-        }
-    }
-
-    // --- โค้ด Firebase และ Logic เดิมของคุณ ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
@@ -112,10 +129,10 @@
     const db = getDatabase(app);
     const paidRef = ref(db, 'paid_status');
 
+    const members = ["แอมป์","เก้า","ท่านคิว","ท่านรอง","ไอที","เต้","ปลื้ม","อ๋อง","เพชร","ชาย","กิตาร์","ตั้งเม","เก้า","ฟอร์ด","ข้าวโอ๊ต","โฟกัส","วิน","นานา","แซน","จิ๊จ๋า","เมม","ปลอย","โบว์","ส้มโอ","พิชช่า","ข้าวหอม","น้ำ","มะยม","ใบตอง","ต้นหอม"];
+    const PRICE = 5;
     const userRole = localStorage.getItem('role') || 'guest';
     let paid = {};
-    const PRICE = 5; // กำหนดราคาต่อคน
-    const members = ["แอมป์","เก้า","ท่านคิว","ท่านรอง","ไอที","เต้","ปลื้ม","อ๋อง","เพชร","ชาย","กิตาร์","ตั้งเม","เก้า","ฟอร์ด","ข้าวโอ๊ต","โฟกัส","วิน","นานา","แซน","จิ๊จ๋า","เมม","ปลอย","โบว์","ส้มโอ","พิชช่า","ข้าวหอม","น้ำ","มะยม","ใบตอง","ต้นหอม"];
 
     onValue(paidRef, (snapshot) => {
         paid = snapshot.val() || {};
@@ -128,32 +145,28 @@
         await set(paidRef, paid);
     }
 
-    window.selectAll = async function() {
-        if (userRole === 'guest') return;
-        if (confirm("ยืนยันการติ๊กจ่ายเงินทั้งหมด?")) {
-            members.forEach((_, i) => paid[i] = true);
-            await set(paidRef, paid);
-        }
-    }
-
-    window.resetData = async function() {
-        if (userRole === 'guest') return;
-        if (confirm("ล้างข้อมูลทั้งหมด?")) await set(paidRef, {});
-    }
-
     function renderTable() {
         const tableBody = document.getElementById('mainTable');
         tableBody.innerHTML = "";
         members.forEach((name, i) => {
+            const isChecked = paid[i] ? 'checked' : '';
+            const rowClass = paid[i] ? 'paid-row' : '';
             const row = document.createElement('tr');
-            if (paid[i]) row.classList.add('table-success-custom');
+            row.className = rowClass;
             row.innerHTML = `
-                <td>${i + 1}</td>
-                <td>${name}</td>
-                <td class="text-center">
-                    <input type="checkbox" class="form-check-input" ${paid[i] ? 'checked' : ''} 
+                <td width="50" class="text-muted small">${i+1}</td>
+                <td class="fw-bold">${name}</td>
+                <td width="80" class="text-center">
+                    <input type="checkbox" class="form-check-input" ${isChecked} 
                     ${userRole === 'guest' ? 'disabled' : ''} onchange="togglePaid(${i})">
-                </td>`;
+                </td>
+            `;
+            // ให้กดที่แถวแล้วติ๊กถูกได้เลย (เฉพาะ Admin)
+            if(userRole !== 'guest') {
+                row.onclick = (e) => {
+                    if(e.target.type !== 'checkbox') togglePaid(i);
+                };
+            }
             tableBody.appendChild(row);
         });
         updateSummary();
@@ -168,8 +181,21 @@
         }
     }
 
+    // ฟังก์ชันเสริม
+    window.toggleTheme = () => {
+        const el = document.documentElement;
+        const isDark = el.getAttribute('data-theme') === 'dark';
+        el.setAttribute('data-theme', isDark ? '' : 'dark');
+        document.getElementById('themeBtn').innerText = isDark ? "🌙 กลางคืน" : "☀️ กลางวัน";
+    }
+    window.selectAll = async () => { if(confirm("ติ๊กจ่ายทุกคน?")) { members.forEach((_,i)=>paid[i]=true); await set(paidRef, paid); } }
+    window.resetData = async () => { if(confirm("เริ่มสัปดาห์ใหม่?")) await set(paidRef, {}); }
     window.logout = () => { localStorage.clear(); window.location.replace('index.html'); }
-    setInterval(() => { document.getElementById('date').innerText = new Date().toLocaleString('th-TH'); }, 1000);
+    window.filterNames = () => {
+        let val = document.getElementById('searchBox').value.toUpperCase();
+        let rows = document.getElementById('mainTable').getElementsByTagName('tr');
+        for (let r of rows) r.style.display = r.innerText.toUpperCase().includes(val) ? "" : "none";
+    }
 </script>
 </body>
 </html>
