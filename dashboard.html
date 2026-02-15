@@ -54,9 +54,7 @@
 
             <div id="adminArea">
                 <button onclick="exportCSV()" class="btn btn-success w-100 mb-2 py-3 fw-bold shadow-sm">📥 Export Excel + สรุปยอด</button>
-                
                 <button onclick="selectAll()" class="btn btn-primary w-100 mb-2 py-2 fw-bold shadow-sm">✅ ติ๊กจ่ายทั้งหมด</button>
-                
                 <button onclick="resetData()" class="btn btn-outline-danger w-100 py-2">🔄 ล้างข้อมูลทั้งหมด</button>
             </div>
 
@@ -67,14 +65,20 @@
     </div>
 </div>
 
-<script src="js/data.js"></script>
-<script src="js/login.js"></script>
+<script>
+    const PRICE = 5;
+    const members = ["แอมป์","เก้า","ท่านคิว","ท่านรอง","ไอที","เต้","ปลื้ม","อ๋อง","เพชร","ชาย","กิตาร์","ตั้งเม","เก้า","ฟอร์ด","ข้าวโอ๊ต","โฟกัส","วิน","นานา","แซน","จิ๊จ๋า","เมม","ปลอย","โบว์","ส้มโอ","พิชช่า","ข้าวหอม","น้ำ","มะยม","ใบตอง","ต้นหอม"];
+    
+    function logout() {
+        localStorage.clear();
+        window.location.replace('index.html');
+    }
+</script>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // Firebase Config เดิมของคุณ
     const firebaseConfig = {
         apiKey: "AIzaSyA4wxFVdj6UDtxAIfG5jTUrKBM2AboT7wQ",
         authDomain: "myroompayment.firebaseapp.com",
@@ -93,20 +97,17 @@
     const userRole = localStorage.getItem('role') || 'guest';
     let paid = {};
 
-    // ดึงข้อมูล Real-time
     onValue(paidRef, (snapshot) => {
         paid = snapshot.val() || {};
         renderTable();
     });
 
-    // ฟังก์ชันติ๊กจ่ายเงินรายคน
     window.togglePaid = async function(i) {
         if (userRole === 'guest') return;
         paid[i] = !paid[i];
         await set(paidRef, paid);
     }
 
-    // ฟังก์ชันติ๊กจ่ายเงินทั้งหมด (เพิ่มใหม่)
     window.selectAll = async function() {
         if (userRole === 'guest') return;
         if (confirm("ยืนยันว่าจะติ๊กจ่ายเงินให้ทุกคนหรือไม่?")) {
@@ -115,7 +116,6 @@
         }
     }
 
-    // ฟังก์ชันล้างข้อมูล
     window.resetData = async function() {
         if (userRole === 'guest') return;
         if (confirm("ล้างข้อมูลการจ่ายเงินทั้งหมดเพื่อเริ่มสัปดาห์ใหม่?")) {
@@ -156,7 +156,8 @@
     }
 
     setInterval(() => {
-        document.getElementById('date').innerText = new Date().toLocaleString('th-TH');
+        const dateEl = document.getElementById('date');
+        if (dateEl) dateEl.innerText = new Date().toLocaleString('th-TH');
     }, 1000);
 
     window.filterNames = function() {
@@ -179,7 +180,7 @@
         let blob = new Blob(['\uFEFF' + rows.join('\n')], { type: 'text/csv;charset=utf-8' });
         let a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `สรุปยอดเงินห้อง_${new Date().toLocaleDateString('th-TH')}.csv`;
+        a.download = `สรุปยอดเงินห้อง.csv`;
         a.click();
     }
 </script>
