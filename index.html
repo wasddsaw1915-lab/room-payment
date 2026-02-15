@@ -6,33 +6,34 @@
     <title>Login - BWIT Fund</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background: #1a1a1a; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Sarabun', sans-serif; }
-        .login-card { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .logo-box { width: 80px; height: 80px; margin-bottom: 20px; }
+        body { background: #121212; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Sarabun', sans-serif; margin: 0; }
+        .login-card { background: #ffffff; padding: 40px; border-radius: 20px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .logo-img { width: 90px; height: 90px; margin-bottom: 20px; object-fit: contain; }
     </style>
 </head>
 <body>
     <div class="login-card">
-        <img src="LOGO.png" class="logo-box" alt="Logo" onerror="this.src='https://via.placeholder.com/80?text=LOGO'">
+        <img src="LOGO.png" class="logo-img" alt="Logo" onerror="this.src='https://www.bwit.ac.th/wp-content/uploads/2021/03/logo-bwit.png'">
         <h4 class="fw-bold mb-4">BWIT FUND</h4>
-        <input type="password" id="pass" class="form-control mb-3" placeholder="รหัสผ่าน">
-        <button class="btn btn-warning w-100 fw-bold" onclick="check()">เข้าสู่ระบบ</button>
+        <input type="password" id="passInput" class="form-control mb-3" placeholder="ใส่รหัสผ่านที่นี่..." style="border-radius: 10px; padding: 12px;">
+        <button class="btn btn-warning w-100 fw-bold py-2" onclick="login()" style="border-radius: 10px;">เข้าสู่ระบบ</button>
     </div>
 
     <script>
-        function check() {
-            const p = document.getElementById('pass').value;
+        function login() {
+            const p = document.getElementById('passInput').value;
             let name = "";
-            // แก้ไขชื่อ Admin เป็นภาษาอังกฤษตามสั่ง
             if(p === "avt101623") name = "Auto";
             else if(p === "san101623") name = "San";
             else if(p === "wasd1915") name = "Phet";
 
             if(name) {
-                localStorage.setItem('role','admin');
+                localStorage.setItem('role', 'admin');
                 localStorage.setItem('adminName', name);
-                window.location.href='dashboard.html';
-            } else { alert("รหัสผิด!"); }
+                window.location.href = 'dashboard.html';
+            } else {
+                alert("รหัสผ่านไม่ถูกต้อง!");
+            }
         }
     </script>
 </body>
