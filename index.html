@@ -7,40 +7,33 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: #1a1a1a; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Sarabun', sans-serif; }
-        .login-card { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; }
-        .logo-box { width: 80px; height: 80px; margin: 0 auto 20px; display: block; }
-        .warning { color: red; font-size: 0.8rem; display: none; margin-bottom: 10px; }
+        .login-card { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .logo-box { width: 80px; height: 80px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
     <div class="login-card">
-        <img src="LOGO.png" class="logo-box" alt="Logo" onerror="this.src='https://www.bwit.ac.th/wp-content/uploads/2021/03/logo-bwit.png'">
+        <img src="LOGO.png" class="logo-box" alt="Logo" onerror="this.src='https://via.placeholder.com/80?text=LOGO'">
         <h4 class="fw-bold mb-4">BWIT FUND</h4>
-        <div class="text-start mb-3">
-            <input type="password" id="pass" class="form-control" placeholder="รหัสผ่าน (English)">
-            <div id="langAlert" class="warning">⚠️ เปลี่ยนเป็นภาษาอังกฤษด้วยครับ</div>
-        </div>
-        <button class="btn btn-warning w-100 fw-bold mb-2" onclick="check()">เข้าสู่ระบบ</button>
-        <button class="btn btn-link w-100 text-muted btn-sm" onclick="guest()">เข้าในฐานะ Guest</button>
+        <input type="password" id="pass" class="form-control mb-3" placeholder="รหัสผ่าน">
+        <button class="btn btn-warning w-100 fw-bold" onclick="check()">เข้าสู่ระบบ</button>
     </div>
 
     <script>
-        const input = document.getElementById('pass');
-        input.addEventListener('keypress', (e) => {
-            const char = e.which || e.keyCode;
-            document.getElementById('langAlert').style.display = (char >= 3585) ? 'block' : 'none';
-        });
-
         function check() {
-            const p = input.value;
-            let name = (p==="avt101623")?"แอมป์":(p==="san101623")?"เก๋า":(p==="wasd1915")?"คิว":"";
+            const p = document.getElementById('pass').value;
+            let name = "";
+            // แก้ไขชื่อ Admin เป็นภาษาอังกฤษตามสั่ง
+            if(p === "avt101623") name = "Auto";
+            else if(p === "san101623") name = "San";
+            else if(p === "wasd1915") name = "Phet";
+
             if(name) {
                 localStorage.setItem('role','admin');
                 localStorage.setItem('adminName', name);
                 window.location.href='dashboard.html';
             } else { alert("รหัสผิด!"); }
         }
-        function guest() { localStorage.setItem('role','guest'); window.location.href='dashboard.html'; }
     </script>
 </body>
 </html>
