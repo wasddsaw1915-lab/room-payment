@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ระบบเช็คชื่อเก็บเงินห้อง</title>
+    <title>ระบบเช็คชื่อเก็บเงินห้อง - BWIT</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="LOGO.png">
@@ -30,26 +30,39 @@
             background-color: var(--bg-body); 
             color: var(--text-main); 
             transition: all 0.3s ease;
+            user-select: none;
         }
 
-        /* ลูกเล่นเวลาเอาเมาส์ไปวางบนแถว */
-        tr { transition: all 0.2s; }
-        tr:hover { transform: scale(1.01); background-color: rgba(255, 204, 0, 0.05); }
-
-        .table td { padding: 15px 10px; vertical-align: middle; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .form-check-input { width: 2.5em !important; height: 2.5em !important; cursor: pointer; border: 2px solid var(--school-grey); transition: 0.2s; }
-        .form-check-input:checked { background-color: var(--school-yellow) !important; border-color: var(--school-yellow) !important; transform: scale(1.1); }
-        
-        /* สไตล์ตารางเมื่อจ่ายแล้ว */
-        .paid-row { background-color: rgba(255, 204, 0, 0.15) !important; animation: fadeIn; animation-duration: 0.5s; }
-
+        /* Navbar Style */
         .navbar { background-color: var(--school-grey) !important; border-bottom: 4px solid var(--school-yellow); }
+        .navbar-brand { transition: transform 0.2s; }
+        .navbar-brand:hover { transform: scale(1.05); }
+
+        /* Table & Checkbox Style */
         .card { background-color: var(--bg-card); border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        tr { transition: all 0.2s; cursor: pointer; }
+        tr:hover { background-color: rgba(255, 204, 0, 0.05); }
+        .table td { padding: 15px 10px; vertical-align: middle; border-bottom: 1px solid rgba(0,0,0,0.05); }
         
+        .form-check-input { 
+            width: 2.5em !important; 
+            height: 2.5em !important; 
+            cursor: pointer; 
+            border: 2px solid var(--school-grey); 
+            transition: 0.2s; 
+        }
+        .form-check-input:checked { 
+            background-color: var(--school-yellow) !important; 
+            border-color: var(--school-yellow) !important; 
+            transform: scale(1.1); 
+        }
+        
+        .paid-row { background-color: rgba(255, 204, 0, 0.15) !important; }
+
         .btn-theme { border: 1px solid #fff; background: none; color: #fff; border-radius: 20px; padding: 2px 12px; font-size: 0.8rem; }
         
-        /* อนิเมชั่นตัวเลขยอดเงิน */
-        #totalAmount { transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        /* Animation Effect */
+        #totalAmount { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .bump { transform: scale(1.2); color: #28a745 !important; }
     </style>
 </head>
@@ -57,7 +70,7 @@
 
 <nav class="navbar navbar-dark sticky-top shadow animate__animated animate__fadeInDown">
     <div class="container">
-        <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="https://www.bwit.ac.th" target="_blank">
             <img src="LOGO.png" width="35" height="35" class="d-inline-block align-top me-2" alt="Logo">
             <span id="navTitle">💰 บัญชีห้องเรียน</span>
         </a>
@@ -104,7 +117,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // ใช้ Config เดิมของคุณ
     const firebaseConfig = {
         apiKey: "AIzaSyA4wxFVdj6UDtxAIfG5jTUrKBM2AboT7wQ",
         authDomain: "myroompayment.firebaseapp.com",
@@ -119,10 +131,27 @@
     const db = getDatabase(app);
     const paidRef = ref(db, 'paid_status');
 
+    // เลขที่ 2 แก้เป็น "เก๋า"
     const members = ["แอมป์","เก๋า","ท่านคิว","ท่านรอง","ไอที","เต้","ปลื้ม","อ๋อง","เพชร","ชาย","กิตาร์","ตั้งเม","เก้า","ฟอร์ด","ข้าวโอ๊ต","โฟกัส","วิน","นานา","แซน","จิ๊จ๋า","เมม","ปลอย","โบว์","ส้มโอ","พิชช่า","ข้าวหอม","น้ำ","มะยม","ใบตอง","ต้นหอม"];
     const PRICE = 5;
     const userRole = localStorage.getItem('role') || 'guest';
     let paid = {};
+
+    // ฟังก์ชันเสียงติ๊ง
+    function playSuccessSound() {
+        try {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = context.createOscillator();
+            const gain = context.createGain();
+            osc.connect(gain);
+            gain.connect(context.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, context.currentTime);
+            gain.gain.setValueAtTime(0.1, context.currentTime);
+            osc.start();
+            osc.stop(context.currentTime + 0.1);
+        } catch (e) {}
+    }
 
     onValue(paidRef, (snapshot) => {
         paid = snapshot.val() || {};
@@ -131,9 +160,10 @@
 
     window.togglePaid = async function(i) {
         if (userRole === 'guest') return;
+        if (!paid[i]) playSuccessSound(); // เล่นเสียงเมื่อติ๊กจ่าย
+
         paid[i] = !paid[i];
         
-        // เพิ่มลูกเล่นให้ตัวเลขยอดเงินเด้งเวลาติ๊ก
         const el = document.getElementById('totalAmount');
         el.classList.add('bump');
         setTimeout(() => el.classList.remove('bump'), 300);
@@ -148,8 +178,8 @@
             const isChecked = paid[i] ? 'checked' : '';
             const rowClass = paid[i] ? 'paid-row' : '';
             const row = document.createElement('tr');
-            row.className = `${rowClass} animate__animated animate__fadeInIn`;
-            row.style.animationDelay = `${i * 0.05}s`; // ให้ค่อยๆ เด้งขึ้นมาทีละแถว
+            row.className = `${rowClass} animate__animated animate__fadeIn`;
+            row.style.animationDelay = `${i * 0.02}s`;
             
             row.innerHTML = `
                 <td width="50" class="text-muted small">#${i+1}</td>
@@ -173,11 +203,10 @@
         if (userRole === 'guest') {
             document.getElementById('adminArea').classList.add('d-none');
             document.getElementById('guestArea').classList.remove('d-none');
-            document.getElementById('navTitle').innerText = "ตรวจสอบการจ่ายเงิน"; //
+            document.getElementById('navTitle').innerText = "ตรวจสอบการจ่ายเงิน";
         }
     }
 
-    // ฟังก์ชันเสริมอื่นๆ คงเดิม
     window.filterNames = () => {
         let val = document.getElementById('searchBox').value.toUpperCase();
         let rows = document.getElementById('mainTable').getElementsByTagName('tr');
@@ -197,7 +226,7 @@
         let url = URL.createObjectURL(blob);
         let link = document.createElement("a");
         link.href = url;
-        link.download = `รายงานเงินห้อง.csv`;
+        link.download = `รายงานเงินห้อง_${new Date().toLocaleDateString('th-TH')}.csv`;
         link.click();
     }
 
@@ -208,7 +237,7 @@
         document.getElementById('themeBtn').innerText = isDark ? "🌙 กลางคืน" : "☀️ กลางวัน";
     }
     window.selectAll = async () => { if(confirm("ติ๊กจ่ายทุกคน?")) { members.forEach((_,i)=>paid[i]=true); await set(paidRef, paid); } }
-    window.resetData = async () => { if(confirm("ล้างข้อมูล?")) await set(paidRef, {}); }
+    window.resetData = async () => { if(confirm("เริ่มสัปดาห์ใหม่?")) await set(paidRef, {}); }
     window.logout = () => { localStorage.clear(); window.location.replace('index.html'); }
 </script>
 </body>
