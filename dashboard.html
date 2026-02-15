@@ -14,7 +14,6 @@
             --text-main: #333333;
             --school-yellow: #ffcc00;
             --school-grey: #6c757d;
-            --row-hover: #f9f9f9;
         }
 
         [data-theme="dark"] {
@@ -22,7 +21,6 @@
             --bg-card: #1e1e1e;
             --text-main: #e0e0e0;
             --school-yellow: #ffdb4d;
-            --row-hover: #2a2a2a;
         }
 
         body { 
@@ -30,39 +28,14 @@
             background-color: var(--bg-body); 
             color: var(--text-main); 
             transition: 0.3s;
-            user-select: none; /* ป้องกันการคลุมดำเวลาเผลอกดค้าง */
         }
 
-        /* ปรับแต่งตารางให้กดง่ายในมือถือ */
-        .table td {
-            padding: 15px 10px; /* เพิ่มพื้นที่กด */
-            vertical-align: middle;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-
-        /* ปุ่ม Checkbox ขนาดใหญ่สะใจ */
-        .form-check-input {
-            width: 2.5em !important;
-            height: 2.5em !important;
-            cursor: pointer;
-            margin: 0;
-            border: 2px solid var(--school-grey);
-        }
-
-        .form-check-input:checked {
-            background-color: var(--school-yellow) !important;
-            border-color: var(--school-yellow) !important;
-        }
-
-        /* แถวที่ติ๊กแล้วให้เปลี่ยนสีทั้งแถว */
-        .paid-row {
-            background-color: rgba(255, 204, 0, 0.15) !important;
-        }
-
+        .table td { padding: 15px 10px; vertical-align: middle; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .form-check-input { width: 2.5em !important; height: 2.5em !important; cursor: pointer; border: 2px solid var(--school-grey); }
+        .form-check-input:checked { background-color: var(--school-yellow) !important; border-color: var(--school-yellow) !important; }
+        .paid-row { background-color: rgba(255, 204, 0, 0.15) !important; }
         .navbar { background-color: var(--school-grey) !important; border-bottom: 4px solid var(--school-yellow); }
         .card { background-color: var(--bg-card); border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        
-        /* ปุ่มสลับโหมด */
         .btn-theme { border: 1px solid #fff; background: none; color: #fff; border-radius: 20px; padding: 2px 12px; font-size: 0.8rem; }
     </style>
 </head>
@@ -81,30 +54,29 @@
 <div class="container mt-3">
     <div class="card p-3 mb-3 text-center border-top border-warning border-4">
         <span class="text-muted small">ยอดเงินรวมทั้งหมด</span>
-        <h2 id="totalAmount" class="fw-bold mb-0" style="color: var(--school-yellow);">0 บาท</h2>
+        <h2 id="totalAmount" class="fw-bold mb-0" style="color: var(--school-yellow); text-shadow: 1px 0px 1px #000;">0 บาท</h2>
     </div>
 
     <div class="card shadow-sm mb-4">
         <div class="p-2 border-bottom">
-            <input type="text" id="searchBox" class="form-control" placeholder="🔍 พิมพ์ชื่อเพื่อค้นหา..." onkeyup="filterNames()">
+            <input type="text" id="searchBox" class="form-control" placeholder="🔍 ค้นหาเลขที่ หรือ ชื่อ..." onkeyup="filterNames()">
         </div>
         
         <div class="table-responsive">
             <table class="table mb-0">
-                <tbody id="mainTable">
-                    </tbody>
+                <tbody id="mainTable"></tbody>
             </table>
         </div>
     </div>
 
     <div id="adminArea" class="pb-5">
-        <button onclick="selectAll()" class="btn btn-warning w-100 mb-2 fw-bold">✅ ติ๊กจ่ายทั้งหมด</button>
+        <button onclick="selectAll()" class="btn btn-warning w-100 mb-2 fw-bold shadow-sm">✅ ติ๊กจ่ายทุกคน</button>
         <div class="row g-2">
             <div class="col-6">
-                <button onclick="exportCSV()" class="btn btn-secondary w-100">📥 โหลดรายงาน</button>
+                <button onclick="exportCSV()" class="btn btn-secondary w-100 shadow-sm">📥 โหลดรายงาน</button>
             </div>
             <div class="col-6">
-                <button onclick="resetData()" class="btn btn-outline-danger w-100">🔄 ล้างข้อมูล</button>
+                <button onclick="resetData()" class="btn btn-outline-danger w-100 shadow-sm">🔄 ล้างข้อมูล</button>
             </div>
         </div>
     </div>
@@ -129,6 +101,7 @@
     const db = getDatabase(app);
     const paidRef = ref(db, 'paid_status');
 
+    // แก้ไขลำดับที่ 2 เป็น "เก๋า"
     const members = ["แอมป์","เก๋า","ท่านคิว","ท่านรอง","ไอที","เต้","ปลื้ม","อ๋อง","เพชร","ชาย","กิตาร์","ตั้งเม","เก้า","ฟอร์ด","ข้าวโอ๊ต","โฟกัส","วิน","นานา","แซน","จิ๊จ๋า","เมม","ปลอย","โบว์","ส้มโอ","พิชช่า","ข้าวหอม","น้ำ","มะยม","ใบตอง","ต้นหอม"];
     const PRICE = 5;
     const userRole = localStorage.getItem('role') || 'guest';
@@ -154,18 +127,15 @@
             const row = document.createElement('tr');
             row.className = rowClass;
             row.innerHTML = `
-                <td width="50" class="text-muted small">${i+1}</td>
-                <td class="fw-bold">${name}</td>
+                <td width="50" class="text-muted small no-search">#${i+1}</td>
+                <td class="fw-bold name-cell">${name}</td>
                 <td width="80" class="text-center">
                     <input type="checkbox" class="form-check-input" ${isChecked} 
                     ${userRole === 'guest' ? 'disabled' : ''} onchange="togglePaid(${i})">
                 </td>
             `;
-            // ให้กดที่แถวแล้วติ๊กถูกได้เลย (เฉพาะ Admin)
             if(userRole !== 'guest') {
-                row.onclick = (e) => {
-                    if(e.target.type !== 'checkbox') togglePaid(i);
-                };
+                row.onclick = (e) => { if(e.target.type !== 'checkbox') togglePaid(i); };
             }
             tableBody.appendChild(row);
         });
@@ -181,7 +151,42 @@
         }
     }
 
-    // ฟังก์ชันเสริม
+    // แก้ไขระบบค้นหา (หาได้ทั้งเลขที่และชื่อ)
+    window.filterNames = function() {
+        let val = document.getElementById('searchBox').value.toUpperCase();
+        let rows = document.getElementById('mainTable').getElementsByTagName('tr');
+        for (let r of rows) {
+            let text = r.innerText.toUpperCase();
+            // ค้นหาจากเนื้อหาในแถวทั้งหมด (รวม #เลขที่ และ ชื่อ)
+            r.style.display = text.includes(val) ? "" : "none";
+        }
+    }
+
+    // แก้ไขระบบ Export (โหลดงาน)
+    window.exportCSV = function() {
+        let rows = [['เลขที่', 'ชื่อ-นามสกุล', 'สถานะ']];
+        let count = 0;
+        members.forEach((name, i) => {
+            const status = paid[i] ? 'จ่ายแล้ว' : '-';
+            if (paid[i]) count++;
+            rows.push([i + 1, name, status]);
+        });
+        rows.push([]);
+        rows.push(['รวมคนจ่าย', count, 'คน']);
+        rows.push(['ยอดเงินรวม', count * PRICE, 'บาท']);
+
+        let csvContent = rows.map(e => e.join(",")).join("\n");
+        let blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        let link = document.createElement("a");
+        let url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `รายงานเงินห้อง_${new Date().toLocaleDateString('th-TH')}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     window.toggleTheme = () => {
         const el = document.documentElement;
         const isDark = el.getAttribute('data-theme') === 'dark';
@@ -191,12 +196,6 @@
     window.selectAll = async () => { if(confirm("ติ๊กจ่ายทุกคน?")) { members.forEach((_,i)=>paid[i]=true); await set(paidRef, paid); } }
     window.resetData = async () => { if(confirm("เริ่มสัปดาห์ใหม่?")) await set(paidRef, {}); }
     window.logout = () => { localStorage.clear(); window.location.replace('index.html'); }
-    window.filterNames = () => {
-        let val = document.getElementById('searchBox').value.toUpperCase();
-        let rows = document.getElementById('mainTable').getElementsByTagName('tr');
-        for (let r of rows) r.style.display = r.innerText.toUpperCase().includes(val) ? "" : "none";
-    }
 </script>
 </body>
 </html>
-
