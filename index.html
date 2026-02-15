@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <link rel="icon" type="image/png" href="LOGO.png">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - BWIT Fund</title>
+    <link rel="icon" type="image/png" href="LOGO.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: #121212; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Sarabun', sans-serif; margin: 0; }
-        .login-card { background: #ffffff; padding: 40px; border-radius: 20px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .login-card { background: white; padding: 40px; border-radius: 20px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .logo-img { width: 90px; height: 90px; margin-bottom: 20px; object-fit: contain; }
     </style>
 </head>
@@ -17,7 +16,7 @@
     <div class="login-card">
         <img src="LOGO.png" class="logo-img" alt="Logo" onerror="this.src='https://www.bwit.ac.th/wp-content/uploads/2021/03/logo-bwit.png'">
         <h4 class="fw-bold mb-4">BWIT FUND</h4>
-        <input type="password" id="passInput" class="form-control mb-3" placeholder="ใส่รหัสผ่านที่นี่..." style="border-radius: 10px; padding: 12px;">
+        <input type="password" id="passInput" class="form-control mb-3" placeholder="รหัสผ่าน..." style="border-radius: 10px; padding: 12px;">
         <button class="btn btn-warning w-100 fw-bold py-2" onclick="login()" style="border-radius: 10px;">เข้าสู่ระบบ</button>
     </div>
 
@@ -40,4 +39,3 @@
     </script>
 </body>
 </html>
-
