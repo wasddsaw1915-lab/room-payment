@@ -47,68 +47,40 @@
                 </div>
             </div>
         </div>
-
         <div class="col-lg-4">
             <div class="card p-4 text-center mb-3 border-primary border-top border-4">
                 <h5 class="text-muted">ยอดเงินรวมสัปดาห์นี้</h5>
                 <h1 id="totalAmount" class="display-4 fw-bold text-primary">0 บาท</h1>
             </div>
-
             <div id="adminArea">
                 <button onclick="exportCSV()" class="btn btn-success w-100 mb-2 py-3 fw-bold shadow-sm">📥 Export Excel + สรุปยอด</button>
                 <button onclick="resetData()" class="btn btn-outline-danger w-100 py-2">🔄 ล้างข้อมูลทั้งหมด</button>
             </div>
-
-            <div id="guestArea" class="alert alert-warning d-none text-center fw-bold">
-                ⚠️ โหมดดูอย่างเดียว (สมาชิก)
-            </div>
+            <div id="guestArea" class="alert alert-warning d-none text-center fw-bold">⚠️ โหมดดูอย่างเดียว</div>
         </div>
     </div>
 </div>
 
 <script src="js/data.js"></script>
 <script src="js/login.js"></script>
-<script src="js/check.js"></script> <script>
-    // ตรวจสอบความปลอดภัย
-    if (localStorage.getItem('login') !== 'true') {
-        window.location.replace('index.html');
-    }
-    
-    // ตั้งค่านาฬิกา
-    function startClock() {
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('date').innerText = now.toLocaleString('th-TH');
-        }, 1000);
-    }
+<script src="js/check.js"></script> <script src="js/export.js"></script>
 
-    // แก้ไขฟังก์ชัน togglePaid ให้มีเสียง
-    const originalTogglePaid = window.togglePaid; 
+<script>
+    if (localStorage.getItem('login') !== 'true') window.location.replace('index.html');
+
+    // ทับฟังก์ชัน togglePaid เดิมเพื่อให้มีเสียง
+    const oldTogglePaid = window.togglePaid;
     window.togglePaid = async function(i) {
-        if (userRole === 'guest') return;
-        
-        // เล่นเสียงเมื่อติ๊กถูก
-        if (!paid[i]) {
-            document.getElementById('soundSuccess').play().catch(e => console.log("Audio play failed"));
-        }
-        
-        // เรียกใช้งานฟังก์ชันเดิมที่อยู่ใน js/check.js
-        paid[i] = !paid[i];
-        renderTable();
-        await saveData(); 
+        if (!paid[i]) document.getElementById('soundSuccess').play().catch(() => {});
+        await oldTogglePaid(i); 
     };
 
-    // แก้ไขฟังก์ชันล้างข้อมูลให้มีเสียง
-    function resetData() {
-        if (confirm("ล้างข้อมูลการจ่ายเงินทั้งหมดเพื่อเริ่มสัปดาห์ใหม่?")) {
-            document.getElementById('soundReset').play().catch(e => console.log("Audio play failed"));
-            paid = {};
-            saveData(); // บันทึกค่าว่างไปที่ Google Sheets
-            renderTable();
-        }
-    }
+    // ระบบนาฬิกา
+    setInterval(() => {
+        document.getElementById('date').innerText = new Date().toLocaleString('th-TH');
+    }, 1000);
 
-    // ระบบค้นหาชื่อ
+    // ระบบค้นหา
     function filterNames() {
         let input = document.getElementById('searchBox').value.toUpperCase();
         let rows = document.getElementById('mainTable').getElementsByTagName('tr');
@@ -118,26 +90,14 @@
         }
     }
 
-    // ระบบส่งออกไฟล์
-    function exportCSV() {
-        let csv = ['เลขที่,ชื่อสมาชิก,สถานะการจ่าย'];
-        let count = 0;
-        members.forEach((n, i) => {
-            const isPaid = paid[i] ? 'จ่ายแล้ว' : '-';
-            if (paid[i]) count++;
-            csv.push(`${i+1},${n},${isPaid}`);
-        });
-        csv.push(''); 
-        csv.push(`,จำนวนสมาชิกที่จ่าย,${count} คน`);
-        csv.push(`,ยอดเงินรวมทั้งสิ้น,${count * PRICE} บาท`);
-        let blob = new Blob(['\uFEFF' + csv.join('\n')], { type: 'text/csv;charset=utf-8' });
-        let a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `รายงานการเงิน_${new Date().toLocaleDateString('th-TH')}.csv`;
-        a.click();
+    function resetData() {
+        if (confirm("ล้างข้อมูลทั้งหมด?")) {
+            document.getElementById('soundReset').play().catch(() => {});
+            paid = {};
+            saveData();
+            renderTable();
+        }
     }
-
-    startClock();
 </script>
 </body>
 </html>
